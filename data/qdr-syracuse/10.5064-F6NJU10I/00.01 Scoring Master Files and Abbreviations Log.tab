@@ -1,0 +1,119 @@
+FileCount	NumericID	Filename	Description	VideoLength
+""	""	""	""	
+"**"	"00"	"List of Files"	""	
+"1"	"00.01"	"00.01 M1 Master Files and Abbreviations.xlsx"	""	
+""	""	""	""	
+"**"	"01"	"General Scoring"	""	
+"2"	"01.01"	"01.01 Scoring Rubric.pdf"	"Scoring Rubric  - PDF"	
+"3"	"01.02"	"01.02 One Page Scoring Rubric.docx"	"One Page Scoring Rubric"	
+"4"	"01.03"	"01.03 One Page Scoring Rubric.pdf"	"One Page Scoring Rubric - PDF"	
+"5"	"01.04"	"01.04 Form Feed Guidebook.docx"	"Formative feedback guidebook "	
+"6"	"01.05"	"01.05 FFS Sent Starters.docx"	"Specific formative feedback statement sentence starters"	
+"7"	"01.06"	"01.06 PST Form Feed Temp.docx"	"Pre-service teacher formative feedback report template"	
+""	""	""	""	
+""	" "	"General Webinars"	" "	
+"8"	"01.11"	"01.11 Webinar 1A AUD.pptx"	"Webinar 1A PowerPoint with embedded audio"	
+"9"	"01.12"	"01.12 Webinar 1A VID.mp4"	"Webinar 1A video"	0.0997337962962963
+"10"	"01.13"	"01.13 Webinar 1B AUD.pptx"	"Webinar 1B PowerPoint with embedded audio"	
+"11"	"01.14"	"01.14 Webinar 1B VID.mp4"	"Webinar 1B video"	2.370138888888889
+"12"	"01.15"	"01.15 Webinar 1C AUD.pptx"	"Webinar 1C PowerPoint with embedded audio"	
+"13"	"01.16"	"01.16 Webinar 1C VID.mp4"	"Webinar 1C video"	0.05896990740740741
+""	""	""	""	
+""	""	"Task-Specific Scoring Materials"	""	
+"**"	"02.00"	"M1"	""	
+"14"	"02.01"	"02.01 M1 Webinar AUD.pptx"	"M1 task-specific scoring webinar with embedded audio"	
+"15"	"02.02"	"02.02 M1 Webinar VID.mp4"	"M1 task-specific scoring webinar video"	0.8159722222222222
+"16"	"02.03"	"02.03 M1 TSSN.docx"	"M1 task-specific scoring notes"	
+"17"	"02.04"	"02.04 M1 TSSN.pdf"	"M1 task-specific scoring notes PDF"	
+"18"	"02.051"	"02.051 M1 Val Vid.mp4"	"M1 validity video"	0.8333333333333334
+"19"	"02.052"	"02.052 M1 Val Vid Transcript.docx"	"M1 validity video transcript"	
+"20"	"02.053"	"02.053 M1 Val Vid Mast Score.docx"	"M1 validity video master score notes"	
+"21"	"02.054"	"02.054 M1 Val Vid Feedback Temp.docx"	"M1 validity video rater feedback template"	
+"22"	"02.061"	"02.061 M1 Cal1 VID.mp4"	"M1 calibration 1 video"	0.8534722222222223
+"23"	"02.062"	"02.062 M1 Cal1 Transcript.docx"	"M1 calibration 1 transcript"	
+"24"	"02.063"	"02.063 M1 Cal1 Mast Score.docx"	"M1 calibration 1 master score notes"	
+"25"	"02.064"	"02.064 M1 Cal1 Feedback Temp.docx"	"M1 calibration 1 rater feedback template"	
+"26"	"02.071"	"02.071 M1 Cal2 VID.mp4"	"M1 calibration 2 video"	0.8458333333333333
+"27"	"02.072"	"02.072 M1 Cal2 Transcript.docx"	"M1 calibration 2 transcript"	
+"28"	"02.073"	"02.073 M1 Cal2 Mast Score.docx"	"M1 calibration 2 master score notes"	
+"29"	"02.074"	"02.074 M1 Cal2 Feedback Temp.docx"	"M1 calibration 2 rater feedback template"	
+"30"	"02.08"	"02.08 M1 Score Just Temp.docx"	"Scores and justifications template"	
+""	""	""	""	
+"**"	"02.10"	"M2"	""	
+"31"	"02.11"	"02.11 M2 Webinar AUD.pptx"	"M2 task-specific scoring webinar with embedded audio"	
+"32"	"02.12"	"02.12 M2 Webinar VID.mp4"	"M2 task-specific scoring webinar video"	1.4506944444444445
+"33"	"02.13"	"02.13 M2 TSSN.docx"	"M2 task-specific scoring notes"	
+"34"	"02.14"	"02.14 M2 TSSN.pdf"	"M2 task-specific scoring notes PDF"	
+"35"	"02.15"	"02.15 M2 Val Vid.mp4"	"M2 validity video"	0.720138888888889
+"36"	"02.16"	"02.16 M2 Val Vid Transcript.docx"	"M2 validity video transcript"	
+"37"	"02.17"	"02.17 M2 Val Vid Mast Score.docx"	"M2 validity video master score notes"	
+"38"	"02.18"	"02.18 M2 Val Vid Feedback Temp.docx"	"M2 validity video rater feedback template"	
+""	""	""	""	
+"**"	"02.20"	"M3"	""	
+"39"	"02.21"	"02.21 M3 Webinar AUD.pptx"	"M3 task-specific scoring webinar with embedded audio"	
+"40"	"02.22"	"02.22 M3 Webinar VID.mp4"	"M3 task-specific scoring webinar video"	1.2826388888888889
+"41"	"02.23"	"02.23 M3 TSSN.docx"	"M3 task-specific scoring notes"	
+"42"	"02.24"	"02.24 M3 TSSN.pdf"	"M3 task-specific scoring notes PDF"	
+"43"	"02.25"	"02.25 M3 Val Vid.mp4"	"M3 validity video"	0.7861111111111111
+"44"	"02.26"	"02.26 M3 Val Vid Transcript.docx"	"M3 validity video transcript"	
+"45"	"02.27"	"02.27 M3 Val Vid Mast Score.docx"	"M3 validity video master score notes"	
+"46"	"02.28"	"02.28 M3 Val Vid Feedback Temp.docx"	"M3 validity video rater feedback template"	
+""	""	""	""	
+"**"	"02.30"	"M4"	""	
+"47"	"02.31"	"02.31 M4 Webinar AUD.pptx"	"M4 task-specific scoring webinar with embedded audio"	
+"48"	"02.32"	"02.32 M4 Webinar VID.mp4"	"M4 task-specific scoring webinar video"	1.0694444444444444
+"49"	"02.33"	"02.33 M4 TSSN.docx"	"M4 task-specific scoring notes"	
+"50"	"02.34"	"02.34 M4 TSSN.pdf"	"M4 task-specific scoring notes PDF"	
+"51"	"02.35"	"02.35 M4 Val Vid.mp4"	"M4 validity video"	0.8430555555555556
+"52"	"02.36"	"02.36 M4 Val Vid Transcript.docx"	"M4 validity video transcript"	
+"53"	"02.37"	"02.37 M4 Val Vid Mast Score.docx"	"M4 validity video master score notes"	
+"54"	"02.38"	"02.38 M4 Val Vid Feedback Temp.docx"	"M4 validity video rater feedback template"	
+""	""	""	""	
+"**"	"02.40"	"S1"	""	
+"55"	"02.41"	"02.41 S1 Webinar AUD.pptx"	"S1 task-specific scoring webinar with embedded audio"	
+"56"	"02.42"	"02.42 S1 Webinar VID.mp4"	"S1 task-specific scoring webinar video"	0.717361111111111
+"57"	"02.43"	"02.43 S1 TSSN.docx"	"S1 task-specific scoring notes"	
+"58"	"02.44"	"02.44 S1 TSSN.pdf"	"S1 task-specific scoring notes PDF"	
+"59"	"02.451"	"02.451 S1 Val Vid.mp4"	"S1 validity video"	0.75625
+"60"	"02.452"	"02.452 S1 Val Vid Transcript.docx"	"S1 validity video transcript"	
+"61"	"02.453"	"02.453 S1 Val Vid Mast Score.docx"	"S1 validity video master score notes"	
+"62"	"02.454"	"02.454 S1 Val Vid Feedback Temp.docx"	"S1 validity video rater feedback template"	
+"63"	"02.461"	"02.461 S1 Cal1 VID.mp4"	"S1 calibration 1 video"	0.8180555555555555
+"64"	"02.462"	"02.462 S1 Cal1 Transcript.docx"	"S1 calibration 1 transcript"	
+"65"	"02.463"	"02.463 S1 Cal1 Mast Score.docx"	"S1 calibration 1 master score notes"	
+"66"	"02.464"	"02.464 S1 Cal1 Feedback Temp.docx"	"S1 calibration 1 rater feedback template"	
+"67"	"02.471"	"02.471 S1 Cal2 VID.mp4"	"S1 calibration 2 video"	0.8520833333333333
+"68"	"02.472"	"02.472 S1 Cal2 Transcript"	"S1 calibration 2 transcript"	
+"69"	"02.473"	"02.473 S1 Cal2 Mast Score.docx"	"S1 calibration 2 master score notes"	
+"70"	"02.474"	"02.474 S1 Cal2 Feedback Temp.docx"	"S1 calibration 2 rater feedback template"	
+"71"	"02.48"	"02.48 S1 Score Just Temp.docx"	"Scores and justifications template"	
+""	""	""	""	
+"**"	"02.50"	"S2"	""	
+"72"	"02.51"	"02.51 S2 Webinar AUD.pptx"	"S2 task-specific scoring webinar with embedded audio"	
+"73"	"02.52"	"02.52 S2 Webinar VID.mp4"	"S2 task-specific scoring webinar video"	0.9055555555555556
+"74"	"02.53"	"02.53 S2 TSSN.docx"	"S2 task-specific scoring notes"	
+"75"	"02.54"	"02.54 S2 TSSN.pdf"	"S2 task-specific scoring notes PDF"	
+"76"	"02.55"	"02.55 S2 Val Vid.mp4"	"S2 validity video"	0.6409722222222222
+"77"	"02.56"	"02.56 S2 Val Vid Transcript.docx"	"S2 validity video transcript"	
+"78"	"02.57"	"02.57 S2 Val Vid Mast Score.docx"	"S2 validity video master score notes"	
+"79"	"02.58"	"02.58 S2 Val Vid Feedback Temp.docx"	"S2 validity video rater feedback template"	
+""	""	""	""	
+"**"	"02.60"	"S3"	""	
+"80"	"02.61"	"02.61 S3 Webinar AUD.pptx"	"S3 task-specific scoring webinar with embedded audio"	
+"81"	"02.62"	"02.62 S3 Webinar VID.mp4"	"S3 task-specific scoring webinar video"	0.9319444444444445
+"82"	"02.63"	"02.63 S3 TSSN.docx"	"S3 task-specific scoring notes"	
+"83"	"02.64"	"02.64 S3 TSSN.pdf"	"S3 task-specific scoring notes PDF"	
+"84"	"02.65"	"02.65 S3 Val Vid.mp4"	"S3 validity video"	0.6826388888888889
+"85"	"02.66"	"02.66 S3 Val Vid Transcript.docx"	"S3 validity video transcript"	
+"86"	"02.67"	"02.67 S3 Val Vid Mast Score.docx"	"S3 validity video master score notes"	
+"87"	"02.68"	"02.68 S3 Val Vid Feedback Temp.docx"	"S3 validity video rater feedback template"	
+""	""	""	""	
+"**"	"02.70"	"S4"	""	
+"02.56 S2 Val Vid Transcript"	"02.71"	"02.71 S4 Webinar AUD.pptx"	"S4 task-specific scoring webinar with embedded audio"	
+"89"	"02.72"	"02.72 S4 Webinar VID.mp4"	"S4 task-specific scoring webinar video"	1.0194444444444444
+"90"	"02.73"	"02.73 S4 TSSN.docx"	"S4 task-specific scoring notes"	
+"91"	"02.74"	"02.74 S4 TSSN.pdf"	"S4 task-specific scoring notes PDF"	
+"92"	"02.75"	"02.75 S4 Val Vid.mp4"	"S4 validity video"	0.6277777777777778
+"93"	"02.76"	"02.76 S4 Val Vid Transcript.docx"	"S4 validity video transcript"	
+"94"	"02.77"	"02.77 S4 Val Vid Mast Score.docx"	"S4 validity video master score notes"	
+"95"	"02.78"	"02.78 S4 Val Vid Feedback Temp.docx"	"S4 validity video rater feedback template"	

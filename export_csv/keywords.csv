@@ -1,0 +1,1591 @@
+id,project_id,keyword
+1,1,fertility
+2,1,birth control
+3,1,parents
+4,1,children
+5,1,household composition
+6,1,"Medicine, Health and Life Sciences"
+7,1,Social Sciences
+8,2,furniture
+9,2,Furniture--China
+10,2,customized furniture
+11,2,furniture purchase
+12,2,demand factors
+13,2,China furniture market
+14,2,Social Sciences
+15,3,HIV care
+16,3,extreme weather events
+17,3,learning collaborative
+18,3,"Medicine, Health and Life Sciences"
+19,3,Social Sciences
+20,4,geothermal resources
+21,4,energy acceptance
+22,4,risk communication
+23,4,place theory
+24,4,sociotechnical systems
+25,4,energy
+26,4,Social Sciences
+27,5,courts
+28,5,hate speech
+29,5,institutionalism
+30,5,interviews
+31,5,judicial decision making
+32,5,Social Sciences
+33,6,Malaria
+34,6,Public Health
+35,6,Interviews
+36,6,"Medicine, Health and Life Sciences"
+37,7,Parkinson's disease
+38,7,Body-worn sensors
+39,7,interviews
+40,7,"Medicine, Health and Life Sciences"
+41,8,romantic relationship quality
+42,8,conceptual analysis
+43,8,big team science
+44,8,cross-indigenous approach
+45,8,large-scale qualitative study
+46,8,Social Sciences
+47,9,COVID-19
+48,9,home schooling
+49,9,working mothers
+50,9,Social Sciences
+51,10,health
+52,10,health behavior
+53,10,HIV
+54,10,AIDS (disease)
+55,10,sexually transmitted disease
+56,10,sexual behavior
+57,10,"Medicine, Health and Life Sciences"
+58,11,precarious employment
+59,11,employment quality
+60,11,fundamental causes
+61,11,constrained choices
+62,11,policy
+63,11,COVID-19
+64,11,"Medicine, Health and Life Sciences"
+65,11,Social Sciences
+66,12,law enforcement
+67,12,housing
+68,12,poverty programs
+69,12,informal economy
+70,12,squatters
+71,12,squatter settlements
+72,12,cities
+73,12,local government
+74,12,Social Sciences
+75,13,abortion
+76,13,qualitative research
+77,13,cognitive interviews
+78,13,interviews
+79,13,"Medicine, Health and Life Sciences"
+80,13,Social Sciences
+81,14,political representation
+82,14,politics
+83,14,voting
+84,14,Social Sciences
+85,15,kidney disease
+86,15,renal disease
+87,15,ESKD
+88,15,CKD
+89,15,end-stage kidney disease
+90,15,chronic kidney disease
+91,15,ESRD
+92,15,end-stage renal disease
+93,15,hospices
+94,15,dialysis
+95,15,delivery models
+96,15,"Medicine, Health and Life Sciences"
+97,16,pastoral systems
+98,16,livestock systems
+99,16,traditional ecological knowledge
+100,16,Earth and Environmental Sciences
+101,16,Social Sciences
+102,17,Parkinson's disease
+103,17,advance care planning
+104,17,Palliative treatment
+105,17,Caregivers
+106,17,"Medicine, Health and Life Sciences"
+107,18,participatory health platforms
+108,18,self-reporting
+109,18,data privacy
+110,18,technology assessment
+111,18,ethical implications
+112,18,online health platforms
+113,18,GDPR
+114,18,data collection platforms
+115,18,"Medicine, Health and Life Sciences"
+116,18,Social Sciences
+117,19,mathematics education
+118,19,secondary education
+119,19,cognitive load theory
+120,19,knowledge complexity
+121,19,task complexity
+122,19,Other
+123,20,industry
+124,20,universities
+125,20,neuroscience
+126,20,ethics
+127,20,intellectual property
+128,20,conflicts of interest
+129,20,technology transfer
+130,20,Business and Management
+131,20,"Medicine, Health and Life Sciences"
+132,20,Social Sciences
+133,20,Other
+134,21,library guides
+135,21,research guides
+136,21,medical libraries
+137,21,academic libraries
+138,21,clinical users
+139,21,Computer and Information Science
+140,21,"Medicine, Health and Life Sciences"
+141,22,advance care planning
+142,22,marginalized population
+143,22,health care
+144,22,illness
+145,22,"Medicine, Health and Life Sciences"
+146,23,nutrition
+147,23,nutrition-sensitive
+148,23,nutrition-specific
+149,23,community health
+150,23,agriculture
+151,23,multisectoral
+152,23,"Medicine, Health and Life Sciences"
+153,24,water resources
+154,24,water monitoring
+155,24,droughts
+156,24,climate change
+157,24,water-supply--management
+158,24,groundwater--management
+159,24,community decision making
+160,24,Engineering
+161,25,mental health
+162,25,master narrative
+163,25,change
+164,25,"Medicine, Health and Life Sciences"
+165,26,sex work
+166,26,prostitution
+167,26,intervention (criminal procedure)
+168,26,judicial process
+169,26,Social Sciences
+170,27,COVID-19
+171,27,healthcare worker
+172,27,"Medicine, Health and Life Sciences"
+173,28,blame avoidance
+174,28,crime
+175,28,criminal justice
+176,28,police
+177,28,policy stability
+178,28,security
+179,28,Social Sciences
+180,29,ethics
+181,29,medical procedures
+182,29,surgery
+183,29,"Medicine, Health and Life Sciences"
+184,30,firefighters
+185,30,mindfulness
+186,30,emergency medical service (EMS) providers
+187,30,barriers
+188,30,facilitators
+189,30,implementation
+190,30,"Medicine, Health and Life Sciences"
+191,31,HIV prevention
+192,31,Latinx
+193,31,sexually minoritized men
+194,31,sexual health
+195,31,pre-exposure prophylaxis (PrEP)
+196,31,"Medicine, Health and Life Sciences"
+197,31,Social Sciences
+198,32,dictatorship
+199,32,democratization
+200,32,oral history
+201,32,Latin America
+202,32,Social Sciences
+203,32,Other
+204,33,spiritual care
+205,33,online spiritual care
+206,33,chaplaincy
+207,33,healthcare
+208,33,nursing
+209,33,palliative care
+210,33,mental health
+211,33,whole-human centered care
+212,33,religion
+213,33,spirituality
+214,33,Computer and Information Science
+215,34,COVID-19
+216,34,Covid-19 IFU Optimisation
+217,34,self-testing
+218,34,self-sampling
+219,34,rapid test
+220,34,Social Sciences
+221,35,pain management
+222,35,pain
+223,35,pastoralism
+224,35,chronic pain
+225,35,health services
+226,35,herders
+227,35,"Medicine, Health and Life Sciences"
+228,36,protective equipment
+229,36,purchasing
+230,36,COVID-19 (Disease)
+231,36,personal protective equipment
+232,36,Social Sciences
+233,37,exercise
+234,37,interviews
+235,37,qualitative research
+236,37,"Medicine, Health and Life Sciences"
+237,38,solar physics
+238,38,astrophysics
+239,38,formative assessments
+240,38,research experience for undergraduates
+241,38,outreach
+242,38,science community
+243,38,Social Sciences
+244,39,hospice care
+245,39,medical care decision making
+246,39,therapeutics
+247,39,antithrombotic agents
+248,39,"Medicine, Health and Life Sciences"
+249,40,health care
+250,40,heart attack
+251,40,myocardial infarction
+252,40,"Medicine, Health and Life Sciences"
+253,41,homelessness
+254,41,health inequalities
+255,41,health needs assessment
+256,41,mental health
+257,41,addiction
+258,41,"Medicine, Health and Life Sciences"
+259,42,Occupational therapists
+260,42,Activity trackers (Wearable technology)
+261,42,Cerebrovascular disease
+262,42,Computer and Information Science
+263,42,"Medicine, Health and Life Sciences"
+264,43,coordination
+265,43,groundwater
+266,43,sustainability
+267,43,inter-organizational relationships
+268,43,water utilities
+269,43,Earth and Environmental Sciences
+270,43,Social Sciences
+271,44,intergenerational continuity
+272,44,protective parenting practices
+273,44,Bangladesh
+274,44,cultural context
+275,44,mother
+276,44,grandmother
+277,44,Arts and Humanities
+278,44,Social Sciences
+279,45,decision making
+280,45,training
+281,45,program evaluation
+282,45,chronic illnesses
+283,45,renal disease
+284,45,healthcare delivery
+285,45,"Medicine, Health and Life Sciences"
+286,46,HIV
+287,46,gender
+288,46,pregnancy
+289,46,Sub-Saharan Africa
+290,46,public health
+291,46,"Medicine, Health and Life Sciences"
+292,46,Social Sciences
+293,47,property
+294,47,law
+295,47,law enforcement
+296,47,businesses
+297,47,private sector
+298,47,corruption
+299,47,Social Sciences
+300,48,health care services
+301,48,health care delivery
+302,48,caregivers
+303,48,post-hospitalization care
+304,48,patient care
+305,48,aftercare
+306,48,"Medicine, Health and Life Sciences"
+307,49,cyber security
+308,49,peace-building
+309,49,energy security
+310,49,European Union
+311,49,NATO
+312,49,Social Sciences
+313,50,surgery
+314,50,ethics
+315,50,cancer
+316,50,life expectancy
+317,50,quality of life
+318,50,physician patient relationship
+319,50,patient care
+320,50,artificial intelligence
+321,50,communication
+322,50,caregivers
+323,50,Computer and Information Science
+324,50,"Medicine, Health and Life Sciences"
+325,50,Social Sciences
+326,51,acceptability
+327,51,bovine tuberculosis
+328,51,evaluation
+329,51,participatory epidemiology
+330,51,surveillance
+331,51,"Medicine, Health and Life Sciences"
+332,51,Social Sciences
+333,52,opioid epidemic
+334,52,public policy
+335,52,public administration
+336,52,substance use
+337,52,social services
+338,52,Social Sciences
+339,53,gender identity
+340,53,gender stereotypes
+341,53,childhood
+342,53,experience
+343,53,adults
+344,53,hobbies
+345,53,careers
+346,53,Social Sciences
+347,54,integration
+348,54,Type two diabetes
+349,54,HIV
+350,54,multimorbidity
+351,54,patient workload of demands
+352,54,patient capacity
+353,54,"Medicine, Health and Life Sciences"
+354,55,libraries
+355,55,library services
+356,55,ethics
+357,55,professional ethics
+358,55,Social Sciences
+359,56,transportation
+360,56,transport infrastructure
+361,56,rural areas
+362,56,infrastructure
+363,56,public transportation
+364,56,Social Sciences
+365,57,family member
+366,57,focus group interviews
+367,57,heart failure
+368,57,perceptions
+369,57,qualitative
+370,57,nurses
+371,57,"Medicine, Health and Life Sciences"
+372,57,Social Sciences
+373,58,gender
+374,58,education
+375,58,children
+376,58,schools
+377,58,students
+378,58,Social Sciences
+379,59,malnutrition
+380,59,food aid
+381,59,child nutrition
+382,59,mothers
+383,59,"Medicine, Health and Life Sciences"
+384,59,Social Sciences
+385,60,adolescence
+386,60,welfare
+387,60,politics
+388,60,attitude
+389,60,civic
+390,60,government
+391,60,youth
+392,60,policy
+393,60,Social Sciences
+394,61,ethnic parties
+395,61,indigenous movements
+396,61,indigenous parties
+397,61,ethnic groups
+398,61,Social Sciences
+399,62,child health
+400,62,childbirth
+401,62,information use
+402,62,"Medicine, Health and Life Sciences"
+403,63,gender
+404,63,participation
+405,63,community development
+406,63,Social Sciences
+407,64,data curation
+408,64,qualitative research
+409,64,social media
+410,64,big data
+411,64,interviews
+412,64,critical incident technique
+413,64,ethics
+414,64,grounded theory
+415,64,Computer and Information Science
+416,64,Social Sciences
+417,65,ethics
+418,65,epidemiology
+419,65,policy
+420,65,disease
+421,65,epidemic
+422,65,"Medicine, Health and Life Sciences"
+423,65,Other
+424,66,arbitration
+425,66,dispute resolution
+426,66,international institutions
+427,66,international law
+428,66,international political economy
+429,66,transnational governance
+430,66,Social Sciences
+431,67,informed consent
+432,67,health literacy
+433,67,visual design
+434,67,key information section
+435,67,Common Rule
+436,67,Other
+437,68,Terminal care
+438,68,Medical ethics
+439,68,"Medicine, Health and Life Sciences"
+440,68,Social Sciences
+441,69,medical evaluation
+442,69,mental disorders
+443,69,psychiatrists
+444,69,psychiatry
+445,69,"Medicine, Health and Life Sciences"
+446,70,eating disorders
+447,70,diet
+448,70,anorexia
+449,70,obsessive-compulsive disorder
+450,70,Social Sciences
+451,71,active learning
+452,71,teaching methods
+453,71,college students
+454,71,college faculty
+455,71,qualitative research
+456,71,Social Sciences
+457,72,civil wars
+458,72,civilian agency
+459,72,contentious politics
+460,72,repertoires of action
+461,72,nonviolent protest
+462,72,ideational factors
+463,72,ideology
+464,72,normative commitments
+465,72,Social Sciences
+466,73,abortion
+467,73,Qualitative research
+468,73,informed consent
+469,73,data
+470,73,Cisgender people
+471,73,Transparency
+472,73,data sharing
+473,73,"Medicine, Health and Life Sciences"
+474,73,Social Sciences
+475,74,information systems
+476,74,information science
+477,74,information services
+478,74,information technology
+479,74,Computer and Information Science
+480,74,Social Sciences
+481,75,place attachment
+482,75,attachment behavior
+483,75,atmospherics
+484,75,biographical data
+485,75,marketing research
+486,75,Business and Management
+487,76,hospices
+488,76,life care planning
+489,76,palliative treatment
+490,76,goals of care
+491,76,"Medicine, Health and Life Sciences"
+492,76,Social Sciences
+493,77,insurance
+494,77,insurance coverage
+495,77,cancer
+496,77,cost of medical care
+497,77,financial toxicity
+498,77,"Medicine, Health and Life Sciences"
+499,78,negotiation
+500,78,birth control
+501,78,levers
+502,78,obstacles
+503,78,married people
+504,78,Social Sciences
+505,79,health services accessibility
+506,79,refugee camps
+507,79,women refugees
+508,79,"Medicine, Health and Life Sciences"
+509,80,feasibility studies
+510,80,traumatic brain injury
+511,80,prediction
+512,80,health
+513,80,health care
+514,80,"Medicine, Health and Life Sciences"
+515,81,AIDS
+516,81,bureaucracy
+517,81,federal government
+518,81,non-governmental organizations
+519,81,social movements
+520,81,social policy
+521,81,state-local relations
+522,81,"Medicine, Health and Life Sciences"
+523,81,Social Sciences
+524,82,risk perceptions
+525,82,healthy volunteer
+526,82,phase I clinical trial
+527,82,pharmaceutical
+528,82,health behavior
+529,82,medication
+530,82,medical ethics
+531,82,Social Sciences
+532,83,Social history
+533,83,"COVID-19 Pandemic, 2020-2023"
+534,83,Journals (Diaries)
+535,83,Arts and Humanities
+536,83,Social Sciences
+537,84,access to care
+538,84,health care access
+539,84,Montagnards (Vietnamese people)
+540,84,mental health
+541,84,generations
+542,84,trauma
+543,84,community-based participatory research
+544,84,"Medicine, Health and Life Sciences"
+545,84,Social Sciences
+546,85,cities
+547,85,decentralization
+548,85,deregulation
+549,85,economic reform
+550,85,municipal services
+551,85,public utilities
+552,85,sanitation
+553,85,urban areas
+554,85,urban development
+555,85,water utilities
+556,85,Social Sciences
+557,86,pharmacy
+558,86,inventory control
+559,86,inventory shortages
+560,86,cooperation
+561,86,drug shortages
+562,86,"Medicine, Health and Life Sciences"
+563,87,moral hazard
+564,87,intergovernmental cooperation
+565,87,intergovernmental fiscal relations
+566,87,unemployment insurance
+567,87,public welfare
+568,87,labor policy
+569,87,federal government
+570,87,Social Sciences
+571,88,digital preservation
+572,88,digital communication
+573,88,online social networks
+574,88,Computer and Information Science
+575,88,Social Sciences
+576,89,data sharing
+577,89,institutional review boards
+578,89,human participants
+579,89,sensitive data
+580,89,Common Rule
+581,89,Social Sciences
+582,89,Other
+583,90,rule of law
+584,90,counterinsurgency
+585,90,rent seeking
+586,90,nation-building
+587,90,Social Sciences
+588,91,citizen participation
+589,91,government
+590,91,provincial government
+591,91,participation
+592,91,authoritarianism
+593,91,reform
+594,91,Social Sciences
+595,92,informed consent
+596,92,health literacy
+597,92,visual design
+598,92,key information section
+599,92,Common Rule
+600,92,"Medicine, Health and Life Sciences"
+601,93,sexual abuse
+602,93,parent child relationship
+603,93,parents
+604,93,child abuse
+605,93,children
+606,93,Social Sciences
+607,94,treaties
+608,94,economic agreements
+609,94,foreign investment
+610,94,bilateral investment treaties
+611,94,ICSID
+612,94,investor-state arbitration
+613,94,ISDS
+614,94,World Bank
+615,94,Law
+616,94,Social Sciences
+617,95,chronic illnesses
+618,95,chronic disabilities
+619,95,pain
+620,95,pain management
+621,95,low back pain
+622,95,back pain
+623,95,"Medicine, Health and Life Sciences"
+624,96,ISIS
+625,96,Islam
+626,96,terrorism
+627,96,terrorist profiles
+628,96,Middle East
+629,96,radicalism
+630,96,Social Sciences
+631,97,HIV prevention
+632,97,PrEP
+633,97,HIV
+634,97,long-acting injectable
+635,97,LAI
+636,97,Black gay men
+637,97,"Medicine, Health and Life Sciences"
+638,98,behavior change communications
+639,98,focus group discussions
+640,98,key informant interviews
+641,98,acceptability
+642,98,feasibility
+643,98,"Medicine, Health and Life Sciences"
+644,99,nutrition-sensitive
+645,99,co-design
+646,99,social and behaviour change communication
+647,99,underweight
+648,99,minimum meal frequency
+649,99,dietary diversity
+650,99,household food consumption
+651,99,breastfeeding practices
+652,99,stunting
+653,99,wasting
+654,99,Social Sciences
+655,100,water insecurity
+656,100,gender-based violence
+657,100,water-supply
+658,100,community leaders
+659,100,social services
+660,100,Social Sciences
+661,101,health systems
+662,101,human resources for health
+663,101,physicians
+664,101,responsiveness
+665,101,"Medicine, Health and Life Sciences"
+666,101,Social Sciences
+667,102,palliative treatment
+668,102,health
+669,102,health problems
+670,102,illness
+671,102,hospitalization
+672,102,hospitals
+673,102,medical care
+674,102,medicine
+675,102,"Medicine, Health and Life Sciences"
+676,103,disease
+677,103,sexually transmitted disease
+678,103,AIDS
+679,103,HIV
+680,103,coping
+681,103,Social Sciences
+682,104,comparative law
+683,104,democratization
+684,104,development
+685,104,rule of law
+686,104,Social Sciences
+687,105,palliative treatment
+688,105,terminal care
+689,105,cancer
+690,105,"Medicine, Health and Life Sciences"
+691,105,Other
+692,106,humanitarian aid
+693,106,disaster relief
+694,106,international development
+695,106,biosecurity
+696,106,medical anthropology
+697,106,medical geography
+698,106,health
+699,106,ebola
+700,106,military operations
+701,106,infectious diseases
+702,106,epidemic
+703,106,marines
+704,106,applied social science
+705,106,armed forces
+706,106,"Medicine, Health and Life Sciences"
+707,106,Social Sciences
+708,107,unaccompanied immigrant children
+709,107,immigration
+710,107,asylum seekers
+711,107,lawyers
+712,107,children
+713,107,Social Sciences
+714,108,digital preservation
+715,108,data curation
+716,108,phenomenology
+717,108,Social Sciences
+718,109,college students
+719,109,skills
+720,109,higher education
+721,109,diet
+722,109,Social Sciences
+723,110,adult education
+724,110,military officers
+725,110,professional development
+726,110,workforce
+727,110,marines
+728,110,armed forces
+729,110,applied social science
+730,110,Social Sciences
+731,110,Other
+732,111,Fear of cancer progression
+733,111,worry
+734,111,advanced cancer
+735,111,psychological wellbeing
+736,111,cancer--patients
+737,111,palliative treatment
+738,111,"Medicine, Health and Life Sciences"
+739,112,stress
+740,112,resilience
+741,112,training and education
+742,112,organizational values
+743,112,embodied values
+744,112,embodiment
+745,112,agency
+746,112,biological determination
+747,112,cultural determinants of stress
+748,112,marines
+749,112,armed forces
+750,112,applied social science
+751,112,combat stress
+752,112,"Medicine, Health and Life Sciences"
+753,112,Social Sciences
+754,113,athlete
+755,113,bullying
+756,113,high performance
+757,113,NVivo
+758,113,parents
+759,113,school age
+760,113,schools
+761,113,student-athletes
+762,113,teachers
+763,113,Social Sciences
+764,114,diversion programs
+765,114,prostitution
+766,114,criminal justice programs
+767,114,Social Sciences
+768,115,Argentina
+769,115,judicial politics
+770,115,Latin America
+771,115,mass media
+772,115,newspapers
+773,115,Supreme Court
+774,115,Social Sciences
+775,116,interest groups
+776,116,policy traps
+777,116,subsidies
+778,116,utilities
+779,116,Social Sciences
+780,117,group medical practice
+781,117,microfinance
+782,117,diabetes
+783,117,health
+784,117,African studies
+785,117,social networks
+786,117,medical care
+787,117,qualitative inquiry
+788,117,group medical visits
+789,117,"Medicine, Health and Life Sciences"
+790,118,brokers
+791,118,clientelism
+792,118,developing democracy
+793,118,distributive politics
+794,118,machine politics
+795,118,political parties
+796,118,Social Sciences
+797,119,nongovernmental organizations
+798,119,human rights
+799,119,democracy
+800,119,globalization
+801,119,Social Sciences
+802,120,courts
+803,120,disappearances
+804,120,homicide
+805,120,human rights
+806,120,lethal violence
+807,120,Social Sciences
+808,121,information literacy
+809,121,information sources
+810,121,information users
+811,121,simulation models
+812,121,student behavior
+813,121,Computer and Information Science
+814,121,Social Sciences
+815,122,human rights
+816,122,diplomacy
+817,122,political prisoners
+818,122,bureaucracy
+819,122,United States--Foreign relations
+820,122,Social Sciences
+821,123,Pain
+822,123,Cancer
+823,123,Rectum--Cancer
+824,123,Virtual reality
+825,123,"Medicine, Health and Life Sciences"
+826,124,HIV
+827,124,AIDS
+828,124,discrimination
+829,124,migrants
+830,124,"Medicine, Health and Life Sciences"
+831,125,military officers
+832,125,marines
+833,125,organizational culture
+834,125,military culture
+835,125,gender bias
+836,125,sexual harassment
+837,125,leadership
+838,125,cohesion
+839,125,equity
+840,125,mentoring
+841,125,pregnancy
+842,125,alcohol consumption
+843,125,military sexual assault (MSA)
+844,125,discrimination
+845,125,applied research
+846,125,empathy
+847,125,diversity
+848,125,Social Sciences
+849,126,health care services
+850,126,appreciative inquiry
+851,126,telecommunication in medicine
+852,126,"Medicine, Health and Life Sciences"
+853,127,married people
+854,127,parental attitudes
+855,127,parenting
+856,127,Social Sciences
+857,128,children
+858,128,married people
+859,128,meaning
+860,128,Social Sciences
+861,129,telemedicine
+862,129,medical care
+863,129,health care services
+864,129,COVID-19
+865,129,"Medicine, Health and Life Sciences"
+866,130,gender
+867,130,social integration
+868,130,neglected tropical diseases (NTD)
+869,130,mass drug administration (MDA)
+870,130,disabilities
+871,130,ethnicity
+872,130,"Medicine, Health and Life Sciences"
+873,131,mental health
+874,131,public health
+875,131,local government
+876,131,"Medicine, Health and Life Sciences"
+877,132,sexual risk-taking behaviour
+878,132,emerging adults
+879,132,systems thinking
+880,132,sexual behavior
+881,132,"Medicine, Health and Life Sciences"
+882,133,renal disease
+883,133,patients
+884,133,decision making
+885,133,African Americans
+886,133,genealogy
+887,133,ethics
+888,133,genetics
+889,133,race
+890,133,"Medicine, Health and Life Sciences"
+891,134,civil wars
+892,134,political violence
+893,134,female combatants
+894,134,gender
+895,134,rebel organization structure
+896,134,rebel survivability
+897,134,conflict outcomes
+898,134,conflict archieves
+899,134,conflict duration
+900,134,Social Sciences
+901,135,maternal health
+902,135,postnatal
+903,135,referral
+904,135,traditional birth attendant
+905,135,"Medicine, Health and Life Sciences"
+906,135,Social Sciences
+907,136,child support
+908,136,child custody hearings
+909,136,family courts
+910,136,contempt of court
+911,136,courtroom proceedings
+912,136,courts
+913,136,Law
+914,136,Social Sciences
+915,137,medical students
+916,137,learning
+917,137,reflective learning
+918,137,experiential learning
+919,137,poverty
+920,137,"Medicine, Health and Life Sciences"
+921,137,Social Sciences
+922,138,language
+923,138,language study
+924,138,sociolinguistics
+925,138,Other
+926,139,"Iran-Iraq War, 1980-1988"
+927,139,nuclear nonproliferation
+928,139,diplomacy
+929,139,Social Sciences
+930,140,Internet
+931,140,families
+932,140,institutions
+933,140,social theory
+934,140,Social Sciences
+935,141,journaling
+936,141,COVID-19
+937,141,immigrants
+938,141,women
+939,141,New York City
+940,141,community-based organizations
+941,141,Social Sciences
+942,142,agriculture
+943,142,focus groups
+944,142,West Africa
+945,142,seed distribution
+946,142,seed selection
+947,142,Agricultural Sciences
+948,142,Social Sciences
+949,143,Brazil
+950,143,campaign advertising
+951,143,Chile
+952,143,Latin America
+953,143,Peru
+954,143,presidential elections
+955,143,television
+956,143,Social Sciences
+957,144,transitions
+958,144,physical activity
+959,144,life change events
+960,144,young adults
+961,144,health behavior
+962,144,"Medicine, Health and Life Sciences"
+963,145,human rights
+964,145,police
+965,145,metropolitan government
+966,145,local politics
+967,145,homelessness
+968,145,children
+969,145,Social Sciences
+970,146,refugees
+971,146,world problems
+972,146,social protest
+973,146,social networks
+974,146,United Nations
+975,146,humanitarian aid
+976,146,international assistance
+977,146,Social Sciences
+978,147,biomeasures
+979,147,medical evaluation
+980,147,hypertension
+981,147,blood pressure
+982,147,physicians (general practice)
+983,147,"Medicine, Health and Life Sciences"
+984,148,collective memory
+985,148,legacies
+986,148,civil wars
+987,148,mixed methods research
+988,148,"ResWorld War, 1939-1945--underground movementsistance"
+989,148,Social Sciences
+990,149,floods
+991,149,storms
+992,149,paleohydrology
+993,149,hydrology
+994,149,emergency preparedness
+995,149,Earth and Environmental Sciences
+996,149,Other
+997,150,Social history
+998,150,"COVID-19 Pandemic, 2020-2023"
+999,150,Journals (Diaries)
+1000,150,Archival activism
+1001,150,Medical anthropology
+1002,150,Pandemics
+1003,150,Arts and Humanities
+1004,150,"Medicine, Health and Life Sciences"
+1005,150,Social Sciences
+1006,151,Financial policy
+1007,151,regulatory agencies
+1008,151,border security
+1009,151,global finance
+1010,151,Social Sciences
+1011,152,financial policy
+1012,152,regulatory agencies
+1013,152,border security
+1014,152,global finance
+1015,152,Social Sciences
+1016,153,Divisive Concepts Laws
+1017,153,music
+1018,153,education
+1019,153,sexual orientation
+1020,153,race
+1021,153,LGBTQ+
+1022,153,legislation
+1023,153,state legislatures
+1024,153,teachers
+1025,153,Arts and Humanities
+1026,153,Social Sciences
+1027,153,Other
+1028,154,intimate partner violence
+1029,154,qualitative research
+1030,154,medical personnel
+1031,154,"Medicine, Health and Life Sciences"
+1032,155,morality policy
+1033,155,parliamentary committees
+1034,155,prostitution policy
+1035,155,qualitative text analysis
+1036,155,Social Sciences
+1037,156,social psychology
+1038,156,disability studies
+1039,156,identity
+1040,156,culture
+1041,156,allyship
+1042,156,Social Sciences
+1043,157,civil rights
+1044,157,Civil Rights Act (1964-USA)
+1045,157,voting rights
+1046,157,Voting Rights Act (1965-USA)
+1047,157,Social Sciences
+1048,158,case selection
+1049,158,front-door criteria
+1050,158,pathway analysis
+1051,158,measurement
+1052,158,mechanisms
+1053,158,mixed methods
+1054,158,multi-method
+1055,158,sequential ignobility
+1056,158,Social Sciences
+1057,159,climate change
+1058,159,environment
+1059,159,political economy
+1060,159,Social Sciences
+1061,160,professional development
+1062,160,experiential learning
+1063,160,medical scribe
+1064,160,medical education
+1065,160,"Medicine, Health and Life Sciences"
+1066,160,Social Sciences
+1067,161,health care services
+1068,161,health care education
+1069,161,women
+1070,161,HPV (virus)
+1071,161,"Medicine, Health and Life Sciences"
+1072,162,affective computing
+1073,162,human-robot interaction
+1074,162,computers
+1075,162,Computer and Information Science
+1076,162,Social Sciences
+1077,163,information technology
+1078,163,communication
+1079,163,loneliness
+1080,163,social isolation
+1081,163,social networks
+1082,163,"Medicine, Health and Life Sciences"
+1083,164,social transformation
+1084,164,social movements
+1085,164,sociotechnical imaginaries
+1086,164,renewable energy
+1087,164,transition pathways
+1088,164,transition narratives
+1089,164,Social Sciences
+1090,164,Other
+1091,165,plagiarism
+1092,165,cheating (Education)
+1093,165,systematic review
+1094,165,Arts and Humanities
+1095,165,Business and Management
+1096,165,Social Sciences
+1097,166,Military Strength
+1098,166,Military effectiveness
+1099,166,Military Operations
+1100,166,Civil war
+1101,166,Guerrillas
+1102,166,Insurgents
+1103,166,Recruitment
+1104,166,Palestine Liberation Organization
+1105,166,Fedayeen
+1106,166,Black September
+1107,166,Social Sciences
+1108,167,political participation
+1109,167,sermon
+1110,167,christianity
+1111,167,Social Sciences
+1112,168,disabilities
+1113,168,accessibility (for disabled)
+1114,168,institutional history
+1115,168,document preservation
+1116,168,archival practices
+1117,168,researcher positionality
+1118,168,diversity
+1119,168,higher education
+1120,168,education
+1121,168,Social Sciences
+1122,168,Other
+1123,169,informal employment
+1124,169,labor relations
+1125,169,local economic development
+1126,169,local government
+1127,169,urban politics
+1128,169,work
+1129,169,employment
+1130,169,economic development
+1131,169,Social Sciences
+1132,170,Translanguaging
+1133,170,bilingual education
+1134,170,educators
+1135,170,teaching methods
+1136,170,Social Sciences
+1137,171,e-cigarettes
+1138,171,vaping
+1139,171,smoking
+1140,171,information
+1141,171,health problems
+1142,171,risk factors
+1143,171,"Medicine, Health and Life Sciences"
+1144,171,Social Sciences
+1145,172,constitutions
+1146,172,comparative institutions
+1147,172,law
+1148,172,civil rights
+1149,172,text data
+1150,172,political systems
+1151,172,Law
+1152,172,Social Sciences
+1153,173,dehumanization
+1154,173,monstrosity metaphor
+1155,173,polarization
+1156,173,political psychology
+1157,173,presidential campaigns
+1158,173,Social Sciences
+1159,174,government
+1160,174,polarization (social sciences)
+1161,174,political parties
+1162,174,Social Sciences
+1163,175,history
+1164,175,nazism
+1165,175,historical data
+1166,175,Social Sciences
+1167,176,racism
+1168,176,recidivism
+1169,176,criminality prediction
+1170,176,risk assessment
+1171,176,Law
+1172,176,Social Sciences
+1173,177,COVID-19 vaccines
+1174,177,health communication
+1175,177,health policy
+1176,177,"Medicine, Health and Life Sciences"
+1177,178,declarations of war
+1178,178,interstate war
+1179,178,peace treaties
+1180,178,war onset
+1181,178,war outcomes
+1182,178,war termination
+1183,178,Social Sciences
+1184,179,argumentation
+1185,179,discussion
+1186,179,mathematics methods
+1187,179,science methods
+1188,179,formative assessment
+1189,179,performance-based assessment
+1190,179,simulated classrooms
+1191,179,teacher education
+1192,179,education
+1193,179,educational assessment
+1194,179,teacher preparation
+1195,179,Other
+1196,180,argumentation
+1197,180,discussion
+1198,180,mathematics methods
+1199,180,science methods
+1200,180,formative assessment
+1201,180,performance-based assessment
+1202,180,simulated classrooms
+1203,180,education
+1204,180,educational assessment
+1205,180,teacher education
+1206,180,teacher preparation
+1207,180,Other
+1208,181,argumentation
+1209,181,discussion
+1210,181,mathematics methods
+1211,181,science methods
+1212,181,formative assessment
+1213,181,performance-based assessment
+1214,181,simulated classrooms
+1215,181,teacher education
+1216,181,education
+1217,181,educational assessment
+1218,181,teacher preparation
+1219,181,Other
+1220,182,terrorism
+1221,182,right-wing extremists
+1222,182,islamophobia
+1223,182,Social Sciences
+1224,183,cold war
+1225,183,diplomacy
+1226,183,world politics
+1227,183,classified information
+1228,183,course content
+1229,183,Social Sciences
+1230,184,argumentation
+1231,184,discussion
+1232,184,mathematics methods
+1233,184,science methods
+1234,184,formative assessment
+1235,184,performance-based assessment
+1236,184,simulated classrooms
+1237,184,teacher education
+1238,184,education
+1239,184,educational assessment
+1240,184,teacher preparation
+1241,184,Other
+1242,185,argumentation
+1243,185,discussion
+1244,185,mathematics methods
+1245,185,science methods
+1246,185,formative assessment
+1247,185,performance-based assessment
+1248,185,simulated classrooms
+1249,185,teacher education
+1250,185,education
+1251,185,educational assessment
+1252,185,teacher preparation
+1253,185,Other
+1254,186,argumentation
+1255,186,discussion
+1256,186,mathematics methods
+1257,186,science methods
+1258,186,formative assessment
+1259,186,performance-based assessment
+1260,186,simulated classrooms
+1261,186,teacher education
+1262,186,education
+1263,186,educational assessment
+1264,186,teacher preparation
+1265,186,Other
+1266,187,argumentation
+1267,187,discussion
+1268,187,mathematics methods
+1269,187,science methods
+1270,187,formative assessment
+1271,187,performance-based assessment
+1272,187,simulated classrooms
+1273,187,teacher education
+1274,187,education
+1275,187,educational assessment
+1276,187,teacher preparation
+1277,187,Other
+1278,188,economic development
+1279,188,industrialization
+1280,188,industrial development
+1281,188,colonialism
+1282,188,political change
+1283,188,postcolonialism
+1284,188,Social Sciences
+1285,189,disabilities
+1286,189,dating (social)
+1287,189,gay community
+1288,189,LGBTQ+
+1289,189,gender issues
+1290,189,adults
+1291,189,Internet
+1292,189,transgender
+1293,189,Social Sciences
+1294,190,argumentation
+1295,190,discussion
+1296,190,mathematics methods
+1297,190,formative assessment
+1298,190,performance-based assessment
+1299,190,simulated classrooms
+1300,190,teacher education
+1301,190,education
+1302,190,educational assessment
+1303,190,teacher education
+1304,190,teacher preparation
+1305,190,Other
+1306,191,argumentation
+1307,191,discussion
+1308,191,mathematics methods
+1309,191,science methods
+1310,191,formative assessment
+1311,191,performance-based assessment
+1312,191,simulated classrooms
+1313,191,teacher education
+1314,191,education
+1315,191,education assessment
+1316,191,teacher preparation
+1317,191,Other
+1318,192,democracy
+1319,192,authoritarianism
+1320,192,education
+1321,192,human capital
+1322,192,nation-building
+1323,192,public goods
+1324,192,modernization
+1325,192,political economy
+1326,192,voter preferences
+1327,192,deinstitutionalization
+1328,192,democracy
+1329,192,Social Sciences
+1330,193,Oceans governance
+1331,193,Critical data studies
+1332,193,Environmental governance
+1333,193,Geographies of big data
+1334,193,Data science
+1335,193,Ocean policy
+1336,193,Big data
+1337,193,Data repositories
+1338,193,Ocean data science initiatives
+1339,193,Computer and Information Science
+1340,193,Earth and Environmental Sciences
+1341,193,Social Sciences
+1342,194,Northern Ireland
+1343,194,human rights
+1344,194,civil rights
+1345,194,civil war
+1346,194,Social Sciences
+1347,195,argumentation
+1348,195,discussion
+1349,195,mathematics methods
+1350,195,science methods
+1351,195,formative assessment
+1352,195,performance-based assessment
+1353,195,simulated classrooms
+1354,195,teacher education
+1355,195,education
+1356,195,educational assessment
+1357,195,teacher preparation
+1358,195,Other
+1359,196,military planning
+1360,196,diplomacy
+1361,196,international relations
+1362,196,foreign policy
+1363,196,World War I
+1364,196,offensive (military science)
+1365,196,Social Sciences
+1366,197,consumer loans
+1367,197,financial institutions
+1368,197,consumer credit
+1369,197,payday loans
+1370,197,Social Sciences
+1371,198,authoritarian regimes
+1372,198,democratic breakdown
+1373,198,democratic transition
+1374,198,political actors
+1375,198,political elites
+1376,198,radicalism
+1377,198,support for democracy
+1378,198,Social Sciences
+1379,199,gender
+1380,199,participation
+1381,199,conservation
+1382,199,sea turtles
+1383,199,mixed methods research
+1384,199,Earth and Environmental Sciences
+1385,199,Social Sciences
+1386,200,COVID-19 vaccines
+1387,200,health communication
+1388,200,health policy
+1389,200,state governments
+1390,200,state departments of health
+1391,200,"Medicine, Health and Life Sciences"
+1392,201,climate distress
+1393,201,young adults
+1394,201,mental health
+1395,201,"Medicine, Health and Life Sciences"
+1396,201,Social Sciences
+1397,202,ethics
+1398,202,artificial intelligence
+1399,202,responsible ai
+1400,202,Computer and Information Science
+1401,202,Social Sciences
+1402,203,international law
+1403,203,international organizations
+1404,203,intergovernmental organizations
+1405,203,international cooperation
+1406,203,international agreements
+1407,203,international relations
+1408,203,trade agreements
+1409,203,Social Sciences
+1410,204,constitutions
+1411,204,constitutional change
+1412,204,Law
+1413,204,Social Sciences
+1414,205,international relations
+1415,205,international conflict
+1416,205,power
+1417,205,influence
+1418,205,space exploration
+1419,205,political influence
+1420,205,Social Sciences
+1421,206,war
+1422,206,war casualties
+1423,206,war crimes
+1424,206,news media
+1425,206,Social Sciences
+1426,207,mapping
+1427,207,geography
+1428,207,maps
+1429,207,intellectual property
+1430,207,geographic information systems
+1431,207,inventions
+1432,207,cartography
+1433,207,patents
+1434,207,Social Sciences
+1435,208,international conflict
+1436,208,deterrence
+1437,208,decision making
+1438,208,crisis management
+1439,208,alliances
+1440,208,international relations
+1441,208,Social Sciences
+1442,209,alliances
+1443,209,diplomacy
+1444,209,foreign policy
+1445,209,international relations
+1446,209,World War I
+1447,209,Social Sciences
+1448,210,prison administration
+1449,210,prison conditions
+1450,210,prison inmates
+1451,210,Social Sciences
+1452,211,constitutions
+1453,211,constitutional change
+1454,211,legislative bodies
+1455,211,Law
+1456,211,Social Sciences
+1457,212,constitutions
+1458,212,constitutional change
+1459,212,negotiation
+1460,212,Law
+1461,212,Social Sciences
+1462,213,constitutions
+1463,213,constitutional change
+1464,213,peace negotiations
+1465,213,Law
+1466,213,Social Sciences
+1467,214,constitutions
+1468,214,constitutional change
+1469,214,Law
+1470,214,Social Sciences
+1471,215,Cold War
+1472,215,foreign policy
+1473,215,leaders
+1474,215,military intervention
+1475,215,political leaders
+1476,215,Kennedy Administration (1961-1963)
+1477,215,presidential administrations
+1478,215,Social Sciences
+1479,216,international relations
+1480,216,self government
+1481,216,colonialism
+1482,216,communication
+1483,216,persuasion
+1484,216,Social Sciences
+1485,217,terrorism
+1486,217,strategy
+1487,217,right-wing extremists
+1488,217,vanguardism
+1489,217,cell-system
+1490,217,leaderless resistance
+1491,217,metapolitics
+1492,217,Social Sciences
+1493,218,constitutions
+1494,218,constitutional change
+1495,218,revolutions
+1496,218,Law
+1497,218,Social Sciences
+1498,219,presidents
+1499,219,Strategic Arms Limitation Talks
+1500,219,arms control
+1501,219,arms control negotiations
+1502,219,Cold War
+1503,219,Social Sciences
+1504,220,cold war
+1505,220,diplomacy
+1506,220,post-world war II period
+1507,220,north atlantic treaty organization
+1508,220,peace
+1509,220,nuclear weapons
+1510,220,international cooperation
+1511,220,Social Sciences
+1512,221,cold war
+1513,221,diplomacy
+1514,221,post-world war II period
+1515,221,north atlantic treaty organization
+1516,221,peace
+1517,221,nuclear weapons
+1518,221,international cooperation
+1519,221,Social Sciences
+1520,222,constitutions
+1521,222,constitutional change
+1522,222,self government
+1523,222,international cooperation
+1524,222,Law
+1525,222,Social Sciences
+1526,223,colonialism
+1527,223,government
+1528,223,administration
+1529,223,authority
+1530,223,historical data
+1531,223,Social Sciences
+1532,224,United States Supreme Court
+1533,224,Supreme Court justices
+1534,224,Supreme Court decisions
+1535,224,law--study and teaching
+1536,224,judicial activism
+1537,224,stare decisis
+1538,224,Law
+1539,224,Social Sciences
+1540,225,north atlantic treaty organization
+1541,225,peace
+1542,225,nuclear weapons
+1543,225,international cooperation
+1544,225,cold war
+1545,225,diplomacy
+1546,225,post-world war II period
+1547,225,Social Sciences
+1548,226,cold war
+1549,226,diplomacy
+1550,226,post-world war II period
+1551,226,north atlantic treaty organization
+1552,226,peace
+1553,226,nuclear weapons
+1554,226,international cooperation
+1555,226,Social Sciences
+1556,227,authoritarianism
+1557,227,humor
+1558,227,interpellation
+1559,227,ideologies
+1560,227,neoliberalism
+1561,227,Social Sciences
+1562,228,Hallux valgus
+1563,228,Preoperative care
+1564,228,Patient satisfaction
+1565,228,Delphi method
+1566,228,"Medicine, Health and Life Sciences"
+1567,229,risk management
+1568,229,alternative energy
+1569,229,construction industry
+1570,229,photovoltaic power systems
+1571,229,solar power plants
+1572,229,Social Sciences
+1573,230,COVID-19 (Disease)
+1574,230,health behavior
+1575,230,university students
+1576,230,dietary habits
+1577,230,physical fitness
+1578,230,Social Sciences
+1579,231,human rights
+1580,231,transitional justice
+1581,231,law
+1582,231,politics
+1583,231,Law
+1584,231,Social Sciences
+1585,232,education
+1586,232,cultural pluralism
+1587,232,equality
+1588,232,political economy
+1589,232,social classes
+1590,232,Social Sciences

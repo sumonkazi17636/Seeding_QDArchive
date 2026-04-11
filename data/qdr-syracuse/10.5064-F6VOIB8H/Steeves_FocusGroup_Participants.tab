@@ -1,0 +1,13 @@
+dateOfSession	transcriptID	alias_name	status	discipline	github_course_cohort	notes
+2020-03-13	"20200313_FocusGroup_001"	"Rahele Deljou"	"Postdoc"	"Psychology"	"2018_carpentries"	"Transcript had bad audio quality, discussion might be missing pieces."
+2020-03-13	"20200313_FocusGroup_001"	"Mahyar Shariati"	"Masters"	"Engineering"	""	"Transcript had bad audio quality, discussion might be missing pieces."
+2020-03-13	"20200313_FocusGroup_001"	"Hamed Momeni"	"Masters"	"SPS"	"2018_carpentries"	"Transcript had bad audio quality, discussion might be missing pieces."
+2020-03-13	"20200313_FocusGroup_001"	"Bahman Mehrnia"	"Doctoral"	"Archaeological Anthropology"	"2018_carpentries"	"Transcript had bad audio quality, discussion might be missing pieces."
+2020-04-10	"20200410_FocusGroup_002"	"Pejman Zangane"	"Doctoral"	"Computer Science"	"2019"	""
+2020-04-10	"20200410_FocusGroup_002"	"Peyman Meskini"	"Masters"	"Management and Systems"	""	""
+2020-04-10	"20200410_FocusGroup_002"	"Mostafa Hajar"	"Masters"	"SPS"	"2018_carpentries"	"repeat after leaving early on 2020-03-12 session"
+2020-07-10	"20200710_FocusGroup_003"	"Atena Qaderi"	"Professor"	"Bioinformatics"	"recruited_external_labs"	""
+2020-07-10	"20200710_FocusGroup_003"	"Niki Aghili"	"Postdoc"	"Bioinformatics"	"recruited_external_labs"	""
+2020-07-10	"20200710_FocusGroup_003"	"Raha Meskini"	"Postdoc"	"Bioinformatics"	"recruited_external_labs"	""
+2020-07-10	"20200710_FocusGroup_003"	"Parisa Nazeri"	"Professor"	"Bioinformatics"	"recruited_external_labs"	""
+2020-07-10	"20200710_FocusGroup_003"	"Shamsi Aslani"	"Postdoc"	"Bioinformatics"	"recruited_external_labs"	""
