@@ -1,344 +1,276 @@
-"""
+﻿"""
 scrapers/icpsr_scraper.py
-Scraper for ICPSR (Inter-university Consortium for Political and Social Research).
-https://www.icpsr.umich.edu
-
-IMPORTANT – DATA CHALLENGE (documented in README):
-  ICPSR does NOT provide a public REST API for bulk data access.
-  - Metadata (study descriptions, authors, keywords) can be scraped from the
-    public search results HTML pages.
-  - Actual DATA FILE downloads require creating a free account and logging in.
-    Downloads via curl/wget redirect to a login wall.
-  - Consequently, files are recorded as FAILED_LOGIN_REQUIRED in the FILES table
-    unless a valid session cookie is injected (see README for workaround).
-
-  Workaround supported: if you export your browser session cookies to
-  data/icpsr/_cookies.txt (Netscape format), this scraper will use them.
-
+ICPSR scraper using OAI-PMH public harvesting endpoint.
+No login required for metadata. Files recorded as FAILED_LOGIN_REQUIRED.
 Student ID: 23293505
 """
 
 import re
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
-
 import requests
-from bs4 import BeautifulSoup
 
 from db.database import (
     insert_project, insert_file, insert_keywords,
     insert_persons, insert_licenses, project_exists,
 )
-from pipeline.downloader import download_file, get_json, SESSION, RATE_DELAY
-
-# ──────────────────────────────────────────────────────────────
-# Config
-# ──────────────────────────────────────────────────────────────
 
 BASE_URL        = "https://www.icpsr.umich.edu"
+OAI_ENDPOINT    = "https://www.icpsr.umich.edu/icpsr-web/ICPSR/oai/repository"
 REPO_FOLDER     = "icpsr"
 REPO_ID         = 2
-DOWNLOAD_METHOD = "SCRAPING"      # HTML scraping for metadata
+DOWNLOAD_METHOD = "API-CALL"
+RATE_DELAY      = 2.0
 
-COOKIES_FILE    = Path(__file__).resolve().parents[1] / "data" / "icpsr" / "_cookies.txt"
+NS = {
+    "oai":    "http://www.openarchives.org/OAI/2.0/",
+    "dc":     "http://purl.org/dc/elements/1.1/",
+    "oai_dc": "http://www.openarchives.org/OAI/2.0/oai_dc/",
+}
 
-SEARCH_QUERIES = [
-    "interview",
-    "qualitative research",
-    "interview transcript",
-    "focus group",
-    "ethnography",
-    "grounded theory",
-]
-
-PAGE_SIZE = 25    # ICPSR UI default
-
-SEARCH_URL = f"{BASE_URL}/web/ICPSR/search/studies"
+QUALITATIVE_KEYWORDS = {
+    "interview", "qualitative", "focus group", "ethnograph",
+    "grounded theory", "thematic analysis", "oral history",
+    "transcript", "narrative", "participant observation",
+    "in-depth interview", "fieldwork", "discourse analysis",
+    "content analysis", "phenomenolog", "interpretive",
+    "mixed method", "case study", "coding", "interviewee",
+}
 
 
-# ──────────────────────────────────────────────────────────────
-# Cookie loading (optional – allows actual file downloads)
-# ──────────────────────────────────────────────────────────────
+def _make_session():
+    s = requests.Session()
+    s.headers.update({
+        "User-Agent": "QDArchiveSeedBot/1.0 (FAU Erlangen SQ26; OAI-PMH harvesting)",
+        "Accept": "text/xml, application/xml, */*",
+    })
+    return s
 
-def _load_cookies(session: requests.Session) -> bool:
-    """Load Netscape-format cookies into session. Returns True if loaded."""
-    if not COOKIES_FILE.exists():
-        return False
+
+def _oai_request(session, params):
     try:
-        import http.cookiejar
-        jar = http.cookiejar.MozillaCookieJar(str(COOKIES_FILE))
-        jar.load(ignore_discard=True, ignore_expires=True)
-        session.cookies.update(jar)
-        print(f"  [icpsr] Loaded cookies from {COOKIES_FILE}")
-        return True
-    except Exception as exc:
-        print(f"  [icpsr] Could not load cookies: {exc}")
-        return False
-
-
-# ──────────────────────────────────────────────────────────────
-# HTML parsing helpers
-# ──────────────────────────────────────────────────────────────
-
-def _search_page(query: str, start: int = 0) -> BeautifulSoup | None:
-    params = {
-        "q":    query,
-        "paging.startRow": start,
-        "paging.rows":     PAGE_SIZE,
-        "dataType":        "qualitative",   # filter to qualitative studies
-    }
-    try:
-        resp = SESSION.get(SEARCH_URL, params=params, timeout=30)
-        resp.raise_for_status()
+        resp = session.get(OAI_ENDPOINT, params=params, timeout=60)
         time.sleep(RATE_DELAY)
-        return BeautifulSoup(resp.text, "html.parser")
+        if resp.status_code != 200:
+            print(f"  [oai] HTTP {resp.status_code}")
+            return None
+        return ET.fromstring(resp.content)
     except Exception as exc:
-        print(f"  [icpsr] search error: {exc}")
+        print(f"  [oai] Request error: {exc}")
         return None
 
 
-def _parse_study_links(soup: BeautifulSoup) -> list[dict]:
-    """Return list of {url, title, study_id} from a search results page."""
-    results = []
-    for a in soup.select("h2.study-title a, a.study-title"):
-        href = a.get("href", "")
-        if "/web/ICPSR/studies/" in href:
-            study_id_match = re.search(r"/studies/(\d+)", href)
-            study_id = study_id_match.group(1) if study_id_match else None
-            full_url = href if href.startswith("http") else BASE_URL + href
-            results.append({
-                "url":      full_url,
-                "title":    a.get_text(strip=True),
-                "study_id": study_id,
-            })
-    return results
+def _get_text(el, tag, ns):
+    child = el.find(f"{ns}:{tag}", NS)
+    return child.text.strip() if child is not None and child.text else None
 
 
-def _parse_total_count(soup: BeautifulSoup) -> int:
-    """Extract total result count from search results page."""
-    for el in soup.select("span.result-count, .results-count, h1"):
-        text = el.get_text()
-        m = re.search(r"([\d,]+)\s+stud", text)
-        if m:
-            return int(m.group(1).replace(",", ""))
-    return 0
+def _get_all(el, tag, ns):
+    return [c.text.strip() for c in el.findall(f"{ns}:{tag}", NS) if c.text and c.text.strip()]
 
 
-def _fetch_study_page(url: str) -> BeautifulSoup | None:
-    try:
-        resp = SESSION.get(url, timeout=30)
-        resp.raise_for_status()
-        time.sleep(RATE_DELAY)
-        return BeautifulSoup(resp.text, "html.parser")
-    except Exception as exc:
-        print(f"  [icpsr] study page error {url}: {exc}")
-        return None
+def _is_qualitative(text):
+    t = text.lower()
+    return any(kw in t for kw in QUALITATIVE_KEYWORDS)
 
 
-def _parse_study_metadata(soup: BeautifulSoup, study_url: str) -> dict:
-    """Extract all available metadata from a study detail page."""
+def _parse_record(record):
     meta = {
-        "title":       "",
-        "description": None,
-        "language":    None,
-        "doi":         None,
-        "upload_date": None,
-        "persons":     [],
-        "keywords":    [],
-        "licenses":    [],
-        "files":       [],
+        "study_id": None, "title": None, "description": None,
+        "language": None, "doi": None, "date": None,
+        "creators": [], "subjects": [], "rights": [],
     }
-
-    # Title
-    title_el = soup.select_one("h1.study-title, h1")
-    if title_el:
-        meta["title"] = title_el.get_text(strip=True)
-
-    # Abstract / description
-    for sel in ["div.summary p", "div#summary", "section.summary"]:
-        el = soup.select_one(sel)
-        if el:
-            meta["description"] = el.get_text(separator=" ", strip=True)[:5000]
-            break
-
-    # Principal investigators (= AUTHORS)
-    for pi in soup.select("span.pi-name, .principal-investigator"):
-        name = pi.get_text(strip=True)
-        if name:
-            meta["persons"].append({"name": name, "role": "AUTHOR"})
-
-    # Keywords / subject terms
-    for kw in soup.select("a.keyword, .keyword-link, span.subject-term"):
-        meta["keywords"].append(kw.get_text(strip=True))
-
-    # DOI / persistent URL
-    doi_el = soup.select_one("a[href*='doi.org'], span.doi")
-    if doi_el:
-        meta["doi"] = doi_el.get("href") or doi_el.get_text(strip=True)
-
-    # Release date
-    for sel in ["span.release-date", "dd.release-date"]:
-        date_el = soup.select_one(sel)
-        if date_el:
-            raw = date_el.get_text(strip=True)
-            m = re.search(r"(\d{4}-\d{2}-\d{2})", raw)
+    header = record.find("oai:header", NS)
+    if header is not None:
+        id_el = header.find("oai:identifier", NS)
+        if id_el is not None and id_el.text:
+            m = re.search(r"ICPSR(\d+)", id_el.text)
             if m:
-                meta["upload_date"] = m.group(1)
-                break
+                meta["study_id"] = m.group(1)
 
-    # License
-    for sel in ["a[href*='creativecommons']", "span.license", "div.license"]:
-        lic_el = soup.select_one(sel)
-        if lic_el:
-            lic_text = lic_el.get_text(strip=True) or lic_el.get("href", "")
-            if lic_text:
-                meta["licenses"].append(lic_text)
-                break
+    dc = record.find(".//oai_dc:dc", NS)
+    if dc is None:
+        return meta
 
-    # File list – ICPSR lists files on the study page
-    for file_row in soup.select("tr.file-row, div.file-item, li.file-item"):
-        fname_el = file_row.select_one("a.file-name, span.file-name")
-        if not fname_el:
-            continue
-        fname    = fname_el.get_text(strip=True)
-        file_url = fname_el.get("href", "")
-        if file_url and not file_url.startswith("http"):
-            file_url = BASE_URL + file_url
-        meta["files"].append({"name": fname, "url": file_url})
+    meta["_text"]       = ET.tostring(dc, encoding="unicode")
+    meta["title"]       = _get_text(dc, "title",       "dc")
+    meta["description"] = _get_text(dc, "description", "dc")
+    meta["language"]    = _get_text(dc, "language",    "dc")
+    meta["creators"]    = _get_all(dc,  "creator",     "dc")
+    meta["subjects"]    = _get_all(dc,  "subject",     "dc")
+    meta["rights"]      = _get_all(dc,  "rights",      "dc")
+
+    for d in _get_all(dc, "date", "dc"):
+        m = re.search(r"(\d{4}-\d{2}-\d{2})", d)
+        if m:
+            meta["date"] = m.group(1); break
+        m = re.search(r"\b(\d{4})\b", d)
+        if m:
+            meta["date"] = m.group(1); break
+
+    for ident in _get_all(dc, "identifier", "dc"):
+        if "doi.org" in ident:
+            meta["doi"] = ident; break
+        if ident.startswith("10."):
+            meta["doi"] = f"https://doi.org/{ident}"; break
+
+    if not meta["doi"] and meta["study_id"]:
+        meta["doi"] = f"https://doi.org/10.3886/ICPSR{meta['study_id']}"
 
     return meta
 
 
-# ──────────────────────────────────────────────────────────────
-# Main scrape entry point
-# ──────────────────────────────────────────────────────────────
+def _save_project(conn, meta):
+    sid         = meta["study_id"]
+    proj_folder = f"study-{sid}"
+    now_ts      = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    project_url = f"{BASE_URL}/web/ICPSR/studies/{sid}"
 
-def scrape(conn, max_projects: int = 300) -> None:
-    """
-    Run the ICPSR scraper.
+    row = {
+        "query_string":               "OAI-PMH harvest (qualitative filter)",
+        "repository_id":              REPO_ID,
+        "repository_url":             BASE_URL,
+        "project_url":                project_url,
+        "version":                    None,
+        "title":                      meta["title"] or f"ICPSR Study {sid}",
+        "description":                (meta["description"] or "")[:5000] or None,
+        "language":                   meta["language"],
+        "doi":                        meta["doi"],
+        "upload_date":                meta["date"],
+        "download_date":              now_ts,
+        "download_repository_folder": REPO_FOLDER,
+        "download_project_folder":    proj_folder,
+        "download_version_folder":    None,
+        "download_method":            DOWNLOAD_METHOD,
+    }
+    pid = insert_project(conn, row)
+    insert_keywords(conn, pid, meta["subjects"])
+    insert_persons(conn, pid, [{"name": c, "role": "AUTHOR"} for c in meta["creators"]])
+    for r in meta["rights"]:
+        if r.strip():
+            insert_licenses(conn, pid, [r.strip()[:200]])
+    insert_file(conn, pid, f"ICPSR_{sid}.zip", "zip", "FAILED_LOGIN_REQUIRED")
+    return pid
 
-    NOTE: Actual file downloads require login. If cookies are present at
-          data/icpsr/_cookies.txt, file downloads are attempted.
-          Otherwise all files are recorded as FAILED_LOGIN_REQUIRED.
 
-    conn        : sqlite3.Connection
-    max_projects: safety cap
-    """
-    print(f"\n{'='*60}")
-    print(f"ICPSR Scraper  ({BASE_URL})")
-    print(f"{'='*60}")
+def scrape(conn, max_projects=500):
+    print("=" * 60)
+    print("ICPSR Scraper â€” OAI-PMH Public Harvesting")
+    print(f"Endpoint: {OAI_ENDPOINT}")
+    print("Metadata: public, no auth needed.")
+    print("Files: FAILED_LOGIN_REQUIRED (ICPSR login wall).")
+    print("=" * 60)
 
-    has_auth = _load_cookies(SESSION)
-    if not has_auth:
-        print("  [warn] No cookies found. Files will be recorded as FAILED_LOGIN_REQUIRED.")
-        print(f"  [hint] Export your ICPSR session cookies to: {COOKIES_FILE}")
+    session          = _make_session()
+    new_count        = 0
+    page_num         = 0
+    resumption_token = None
 
-    seen_ids  = set()
-    new_count = 0
+    while new_count < max_projects:
+        page_num += 1
 
-    for query in SEARCH_QUERIES:
-        if new_count >= max_projects:
+        if resumption_token is None:
+            params = {"verb": "ListRecords", "metadataPrefix": "oai_dc"}
+            print(f"\n[oai] Page 1 â€” sending initial OAI-PMH request ...")
+        else:
+            params = {"verb": "ListRecords", "resumptionToken": resumption_token}
+            print(f"\n[oai] Page {page_num} â€” continuing with resumption token ...")
+
+        root = _oai_request(session, params)
+        if root is None:
+            print("  [oai] No response â€” stopping.")
             break
-        print(f"\n[query] '{query}'")
-        start = 0
-        total = None
 
-        while True:
+        err = root.find("oai:error", NS)
+        if err is not None:
+            print(f"  [oai] Server error: {err.get('code')} â€” {err.text}")
+            break
+
+        list_records = root.find("oai:ListRecords", NS)
+        if list_records is None:
+            print("  [oai] No ListRecords element â€” stopping.")
+            break
+
+        records = list_records.findall("oai:record", NS)
+        print(f"  [oai] Received {len(records)} records")
+
+        page_saved = 0
+        for record in records:
             if new_count >= max_projects:
                 break
 
-            soup = _search_page(query, start)
-            if soup is None:
-                break
+            header = record.find("oai:header", NS)
+            if header is not None and header.get("status") == "deleted":
+                continue
 
-            if total is None:
-                total = _parse_total_count(soup)
-                print(f"  total_count≈{total}")
+            meta = _parse_record(record)
+            if not meta["study_id"]:
+                continue
 
-            links = _parse_study_links(soup)
-            if not links:
-                break
+            combined = " ".join([
+                meta.get("_text", ""),
+                " ".join(meta["subjects"]),
+                meta["description"] or "",
+                meta["title"] or "",
+            ])
+            if not _is_qualitative(combined):
+                continue
 
-            for link in links:
-                if new_count >= max_projects:
-                    break
-                study_id = link["study_id"]
-                if not study_id or study_id in seen_ids:
-                    continue
-                seen_ids.add(study_id)
+            project_url = f"{BASE_URL}/web/ICPSR/studies/{meta['study_id']}"
+            if project_exists(conn, project_url):
+                continue
 
-                study_url = link["url"]
-                if project_exists(conn, study_url):
-                    print(f"  [dup] study {study_id} already in DB")
-                    continue
+            print(f"\n  [study] {meta['study_id']}  {(meta['title'] or '')[:60]}")
+            pid = _save_project(conn, meta)
+            new_count += 1
+            page_saved += 1
+            print(f"    [saved] project_id={pid} ({new_count}/{max_projects})")
 
-                print(f"\n  [study] {study_id}  {link['title'][:60]}")
+        print(f"  [oai] Page {page_num}: {page_saved} saved | running total: {new_count}")
 
-                study_soup = _fetch_study_page(study_url)
-                if study_soup is None:
-                    continue
-                meta = _parse_study_metadata(study_soup, study_url)
+        token_el = list_records.find("oai:resumptionToken", NS)
+        if token_el is not None and token_el.text and token_el.text.strip():
+            resumption_token = token_el.text.strip()
+            total  = token_el.get("completeListSize", "?")
+            cursor = token_el.get("cursor", "?")
+            print(f"  [oai] Repository: scanned {cursor} / {total} total records")
+        else:
+            print("  [oai] Harvest complete â€” no more pages.")
+            break
 
-                if not meta["title"]:
-                    meta["title"] = link["title"]
+    if new_count == 0:
+        print("\n[icpsr] Zero records harvested â€” OAI-PMH endpoint may be down.")
+        print("[icpsr] Recording a placeholder entry in the database.")
+        _record_placeholder(conn)
+    else:
+        print(f"\n[icpsr] Done. {new_count} qualitative projects recorded via OAI-PMH.")
 
-                proj_folder = f"study-{study_id}"
-                now_ts      = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-                project_row = {
-                    "query_string":               query,
-                    "repository_id":              REPO_ID,
-                    "repository_url":             BASE_URL,
-                    "project_url":                study_url,
-                    "version":                    None,
-                    "title":                      meta["title"],
-                    "description":                meta["description"],
-                    "language":                   meta["language"],
-                    "doi":                        meta["doi"],
-                    "upload_date":                meta["upload_date"],
-                    "download_date":              now_ts,
-                    "download_repository_folder": REPO_FOLDER,
-                    "download_project_folder":    proj_folder,
-                    "download_version_folder":    None,
-                    "download_method":            DOWNLOAD_METHOD,
-                }
-                project_id = insert_project(conn, project_row)
-                insert_keywords(conn, project_id, meta["keywords"])
-                insert_persons(conn,   project_id, meta["persons"])
-                insert_licenses(conn,  project_id, meta["licenses"])
-
-                # ── Files ──
-                if meta["files"]:
-                    for f in meta["files"]:
-                        fname = f["name"]
-                        furl  = f["url"]
-                        ext   = fname.rsplit(".", 1)[-1].lower() if "." in fname else ""
-
-                        if has_auth and furl:
-                            status = download_file(
-                                url=furl,
-                                repo_folder=REPO_FOLDER,
-                                project_folder=proj_folder,
-                                filename=fname,
-                            )
-                        else:
-                            status = "FAILED_LOGIN_REQUIRED"
-
-                        insert_file(conn, project_id, fname, ext, status)
-                else:
-                    # No file list parsed from page —
-                    # record a placeholder for the study itself
-                    insert_file(conn, project_id,
-                                f"icpsr-{study_id}.zip", "zip",
-                                "FAILED_LOGIN_REQUIRED")
-
-                new_count += 1
-                print(f"    [recorded] project_id={project_id} ({new_count}/{max_projects})")
-
-            # Pagination
-            start += PAGE_SIZE
-            if total and start >= total:
-                break
-
-    print(f"\n[icpsr] Done. {new_count} new projects recorded.")
+def _record_placeholder(conn):
+    now_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    row = {
+        "query_string":               "OAI-PMH harvest",
+        "repository_id":              REPO_ID,
+        "repository_url":             BASE_URL,
+        "project_url":                f"{BASE_URL}/web/ICPSR/search/studies?q=qualitative",
+        "version":                    None,
+        "title":                      "ICPSR â€” OAI-PMH Endpoint Unavailable",
+        "description":                (
+            "ICPSR is a JavaScript SPA that blocks unauthenticated scraping. "
+            "OAI-PMH public endpoint was attempted but returned no data. "
+            "See Technical Challenges 1 and 2 in README."
+        ),
+        "language":                   None,
+        "doi":                        None,
+        "upload_date":                None,
+        "download_date":              now_ts,
+        "download_repository_folder": REPO_FOLDER,
+        "download_project_folder":    "oai-unavailable",
+        "download_version_folder":    None,
+        "download_method":            DOWNLOAD_METHOD,
+    }
+    pid = insert_project(conn, row)
+    insert_file(conn, pid, "icpsr-oai.zip", "zip", "FAILED_LOGIN_REQUIRED")
+    print(f"  [icpsr] Placeholder recorded (project_id={pid})")
