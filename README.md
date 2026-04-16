@@ -1,6 +1,9 @@
 # Seeding QDArchive – Part 1: Data Acquisition
 
-**Student:** 23293505 | **Professor:** Dirk Riehle, FAU Erlangen-Nürnberg | **Course:** SQ26
+**Student:** Sumon Kazi · Matriculation ID: 23293505
+**Course:** SQ26 – Applied Software Engineering Seminar/Project
+**Professor:** Dirk Riehle, FAU Erlangen-Nürnberg
+**GitHub:** https://github.com/sumonkazi17636/Seeding_QDArchive
 
 ---
 
@@ -8,24 +11,56 @@
 
 | ID | Name  | URL |
 |----|-------|-----|
-| 1  | QDR   | https://data.qdr.syr.edu |
-| 2  | ICPSR | https://www.icpsr.umich.edu |
+| 4  | QDR (Qualitative Data Repository) | https://data.qdr.syr.edu |
+| 15 | ICPSR | https://www.icpsr.umich.edu |
 
 ---
 
-## Structure
+## Results Summary
+
+| Table        | Rows  |
+|-------------|-------|
+| REPOSITORIES | 2     |
+| PROJECTS     | 232   |
+| FILES        | 7,018 |
+| KEYWORDS     | 794   |
+| PERSON_ROLE  | 178   |
+| LICENSES     | 122   |
+
+---
+
+## Project Structure
 
 ```
 Seeding_QDArchive/
-├── 23293505-seeding.db          ← SQLite submission file
+├── 23293505-seeding.db          ← SQLite submission file (root of repo)
 ├── main.py                      ← Pipeline entry point
 ├── requirements.txt
-├── db/         schema.sql, database.py
-├── scrapers/   qdr_scraper.py, icpsr_scraper.py
-├── export/     export_csv.py
-├── logs/       pipeline.log
-└── data/       qdr/{project}/  icpsr/{study_id}/   (not in Git)
+├── README.md
+├── db/
+│   ├── schema.sql               ← Six-table schema
+│   └── database.py              ← DB helpers
+├── scrapers/
+│   ├── qdr_public_scraper.py    ← QDR: API-CALL with fileAccess:Public filter
+│   ├── qdr_scraper.py           ← QDR: OAI-PMH fallback
+│   └── icpsr_scraper.py         ← ICPSR: OAI-PMH (see Technical Challenges)
+├── export/
+│   ├── export_csv.py
+│   └── csv/                     ← Generated CSVs
+└── data/                        ← Downloaded files (not in Git; shared separately)
+    └── qdr/{project_folder}/*.pdf, *.txt, *.xlsx ...
 ```
+
+---
+
+## Database Schema
+
+Six tables exactly as specified by Professor Riehle.
+
+**Enum values:**
+- `FILES.status`: `SUCCEEDED` · `FAILED_LOGIN_REQUIRED` · `FAILED_SERVER_UNRESPONSIVE` · `FAILED_TOO_LARGE`
+- `PERSON_ROLE.role`: `AUTHOR` · `UPLOADER` · `OWNER` · `OTHER` · `UNKNOWN`
+- `download_method`: `API-CALL` (QDR) · `SCRAPING` (ICPSR)
 
 ---
 
@@ -33,95 +68,69 @@ Seeding_QDArchive/
 
 ```bash
 python -m venv venv
-venv\Scripts\activate          # Windows
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
 ## Running
 
 ```bash
-python main.py                  # both repos, max 1000 each
-python main.py --repo qdr       # QDR only
-python main.py --repo icpsr     # ICPSR only
-python main.py --max 200        # smaller run for testing
-python main.py --export-only    # just regenerate CSVs
+python main.py --repo qdr --max 500   # QDR only
+python main.py --max 500              # both repos
+python main.py --export-only          # regenerate CSVs
 ```
-
-## Submission
-
-```bash
-git add 23293505-seeding.db
-git commit -m "Part 1 complete"
-git tag part-1-release
-git push origin main --tags
-```
-
-Upload `data/` folder to FAUbox or Google Drive.
 
 ---
 
-## How the Scrapers Work
+## How the QDR Scraper Works
 
-**QDR:** Uses the Dataverse **OAI-PMH** endpoint (`/oai?verb=ListRecords`) to bulk-harvest
-all dataset metadata. A second pass uses the Dataverse Search API with qualitative keywords
-for extra coverage. `download_method = API-CALL`.
+QDR runs on Dataverse and exposes a public REST Search API. The key discovery was that QDR's own search interface uses a `fileAccess:"Public"` filter parameter to show only datasets with openly downloadable files. The scraper uses this same filter in every API call:
 
-**ICPSR:** Uses ICPSR's **OAI-PMH** endpoint (`/oai/provider`) to harvest metadata.
-Records are filtered by qualitative keywords (interview, transcript, ethnograph, etc.)
-in title/description/subjects. `download_method = API-CALL`.
+```
+GET https://data.qdr.syr.edu/api/search
+    ?q=interview&type=dataset&fq=fileAccess:"Public"
+```
+
+For each matching dataset the scraper fetches full metadata (authors, keywords, license) via the Dataverse dataset API, retrieves the file list, and downloads every file not marked `restricted=True`. Results are recorded with the correct status enum. `download_method = API-CALL`.
 
 ---
 
 ## Technical Challenges (Data — not Programming)
 
-### 1. Both Repositories Require Login for File Downloads
+### 1. QDR: Mixed Access Within "Public" Datasets
 
-QDR and ICPSR use authentication walls for virtually all file downloads. QDR's
-Dataverse file access endpoint (`/api/access/datafile/{id}`) returns HTTP 403 or
-redirects to an HTML login page for unauthenticated requests. ICPSR requires users
-to create a free account and accept per-study terms of use before any download.
-All file download attempts are recorded honestly as `FAILED_LOGIN_REQUIRED` in the
-FILES table. Metadata (title, description, authors, keywords, DOI, license) is
-fully collected without authentication.
+The `fileAccess:"Public"` filter identifies datasets where at least one file is public. However, individual files within those datasets can carry their own separate restrictions. A typical dataset has a publicly downloadable interview guide and consent form, but the actual interview transcripts are restricted. The API's per-file `restricted` field correctly identifies this. The scraper attempts every file and records the outcome honestly — which is why the FILES table contains both `SUCCEEDED` and `FAILED_LOGIN_REQUIRED` entries within the same project.
 
-### 2. Most ICPSR Qualitative Data is Restricted-Use
+### 2. QDR: No .qdpx Files Publicly Accessible
 
-Beyond login, many ICPSR qualitative studies carry additional "restricted-use"
-flags. These require a signed data-use agreement and institutional approval
-before access is granted — even with a valid account. This means that even if
-login were achieved, a large fraction of qualitative datasets could still not be
-downloaded without a separate approval process, which was outside the scope of
-Part 1.
+The primary target file type — `.qdpx` (REFI-QDA format) — exists on QDR but is always individually restricted to registered users. No `.qdpx` or `.nvpx` files were successfully downloaded. This is a fundamental data access policy at QDR: sensitive qualitative analysis files are protected even when the surrounding project is publicly listed.
 
-### 3. No .qdpx Files Publicly Accessible
+### 3. ICPSR: OAI-PMH Endpoint Returns HTTP 404
 
-The primary target file type (.qdpx, REFI-QDA format) exists on QDR but is
-always behind the authentication wall. Zero .qdpx files were successfully
-downloaded in Part 1. This is the most significant gap relative to the
-project's stated goal of collecting QDA files.
+ICPSR's documented OAI-PMH endpoint (`https://www.icpsr.umich.edu/oai/provider`) returned HTTP 404 for all requests. The alternative endpoint found in ICPSR's own documentation (`https://pcms.icpsr.umich.edu/pcms/api/1.0/oai/studies`) also did not return usable data during the collection period. As a result, zero projects were collected from ICPSR. The REPOSITORIES table correctly records ICPSR as an assigned repository. This is a data infrastructure challenge — the endpoint information in public documentation did not match the live system.
 
-### 4. Keyword Fields Contain Multi-value Strings (Data Quality)
+### 4. ICPSR: File Downloads Require Institutional Login
 
-Both repositories store multiple keywords in a single field, e.g.
-`"interlanguage pragmatics, EFL learners, scoping review"`. Per the professor's
-primary rule (do not change data), these are stored as-is. Splitting and
-normalising keywords is a Part 2 task.
+Even when ICPSR study pages are publicly browsable, all data file downloads require login with an account linked to a member institution. Attempting to download without authentication redirects to a login page. Even if metadata collection had succeeded, file downloads would have been recorded as `FAILED_LOGIN_REQUIRED`.
 
-### 5. Inconsistent Date Formats
+### 5. Keyword Data Quality: Multi-value Strings
 
-Upload/publication dates appear in many formats: ISO 8601 (`2023-10-17`),
-year-only (`2023`), and human-readable (`October 17, 2023`). Stored as-is;
-normalisation deferred to Part 2.
+Both repositories store multiple subject terms in a single field, for example: `"interlanguage pragmatics, EFL learners, scoping review"`. Per the professor's primary rule (do not change data when downloading), these are stored as-is in the KEYWORDS table. Splitting and normalisation is a Part 2 task.
 
-### 6. QDR Search Results Vary by Authentication Level
+### 6. Inconsistent Date Formats
 
-QDR's own documentation states that guest searches return fewer results than
-authenticated searches. As a result, the dataset count collected here may be
-lower than what a logged-in user would find, even using the same queries.
+Upload dates appear in varying formats: ISO 8601, year-only, and human-readable strings. Stored as-is; normalisation deferred to Part 2.
 
-### 7. ICPSR DataCite Filter Returns Zero Results
+### 7. Module Path Error During Development
 
-An earlier scraper version used the DataCite REST API filtered to
-`client-id=icpsr.umich`. This returned zero results because ICPSR's actual
-DataCite client ID differs from this assumed value. The fix was to use
-ICPSR's own OAI-PMH endpoint directly, which works correctly.
+During testing, two versions of `main.py` coexisted in the project. Running the newer `main.py` before `scrapers/qdr_public_scraper.py` was placed in the correct folder caused a `ModuleNotFoundError`. Resolved by placing the file in the scrapers subfolder. The final successful run collected all 232 projects.
+
+---
+
+## Submission
+
+| Item | Status |
+|---|---|
+| `23293505-seeding.db` in repo root | ✅ |
+| Git tag `part-1-release` | ✅ pushed |
+| `data/` folder | Shared separately via FAUbox/Google Drive |
