@@ -1,8 +1,0 @@
-FrequencyofChallengeCodeforeachSector	B	C	D	E	F	G	H	I
-	""	"Academia"	"Agriculture"	"Conservancy District"	"Environmental Services"	"Municipal Services"	"Governmental"	"Indigenous"
-	"Climate Change"	"0.08"	"0.04"	"0.04"	"7.0000000000000007E-2"	"0.06"	"0.05"	"0.02"
-	"Community"	"7.0000000000000007E-2"	"0.05"	"0.05"	"0.08"	"0.08"	"0.1"	"7.0000000000000007E-2"
-	"Drought"	"0.05"	"0.06"	"0.03"	"0.06"	"0.04"	"0.08"	"0.1"
-	"Floods"	"0.01"	"0"	"0"	"0.02"	"0.01"	"0.01"	"0.01"
-	"Population Growth"	"0.02"	"0.04"	"0.06"	"0.01"	"0.08"	"0"	"0.02"
-	"Wildfires"	"7.0000000000000007E-2"	"0.02"	"0.01"	"7.0000000000000007E-2"	"0.11"	"0.03"	"0"

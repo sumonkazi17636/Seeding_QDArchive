@@ -1,7 +1,0 @@
-FrequencyofHydrologyCodeforeachSector	B	C	D	E	F	G	H	I	J
-	""	"Academia"	"Agriculture"	"Conservancy District"	"Engineering"	"Environmental Services"	"Municipal Services"	"Governmental"	"Indigenous"
-	"Groundwater"	"0.02"	"0.27"	"0.24"	"0.01"	"0.01"	"0.01"	"0.25"	"0.13"
-	"Snowpack"	"0.16"	"0.01"	"0.02"	"0.02"	"0.04"	"0.02"	"0.01"	"0"
-	"Streamflow"	"0.05"	"7.0000000000000007E-2"	"7.0000000000000007E-2"	"7.0000000000000007E-2"	"7.0000000000000007E-2"	"0.02"	"0.08"	"0.05"
-	"Surface Water"	"0"	"7.0000000000000007E-2"	"0.09"	"0.02"	"0.03"	"0.01"	"0.05"	"0.09"
-	"Watersheds"	"0.03"	"0.02"	"0"	"0.01"	"0.16"	"0.1"	"0.01"	"0"

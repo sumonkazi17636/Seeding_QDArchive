@@ -1,74 +1,89 @@
 """
-main.py
-QDArchive Seeding Pipeline — Part 1: Data Acquisition
-Student ID: 23293505
-Repositories: QDR Syracuse, ICPSR
-
+main.py  –  SQ26 Seeding QDArchive, Student 23293505
+============================================================
 Usage:
-    python main.py                  # run both scrapers
-    python main.py --repo qdr       # only QDR
-    python main.py --repo icpsr     # only ICPSR
-    python main.py --export-only    # just export CSV, no scraping
-    python main.py --max 50         # cap new projects per scraper
+  python main.py                     # run QDR + ICPSR (default max=1000 each)
+  python main.py --repo qdr          # only QDR
+  python main.py --repo icpsr        # only ICPSR
+  python main.py --max 200           # cap per repository
+  python main.py --export-only       # only export CSVs
+============================================================
 """
-
-import argparse
-import sys
+import argparse, logging, sys
 from pathlib import Path
 
-# Ensure project root is on the path (for db.*, scrapers.*, etc.)
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+LOG_DIR = Path(__file__).parent / "logs"
+LOG_DIR.mkdir(exist_ok=True)
 
-from db.database import init_db, DEFAULT_DB_PATH
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(LOG_DIR / "pipeline.log", encoding="utf-8"),
+    ],
+)
+log = logging.getLogger("main")
+
+import db.database as db
 from scrapers import qdr_scraper, icpsr_scraper
 from export.export_csv import export_all
 
+BANNER = """
+============================================================
+QDArchive Seeding — Part 1: Data Acquisition
+Student ID : 23293505
+Database   : {}
+============================================================"""
+
 
 def main():
-    parser = argparse.ArgumentParser(description="QDArchive Seeding Pipeline – Part 1")
-    parser.add_argument(
-        "--repo", choices=["qdr", "icpsr", "both"], default="both",
-        help="Which repository to scrape (default: both)"
-    )
-    parser.add_argument(
-        "--max", type=int, default=500,
-        help="Maximum new projects to record per repository (default: 500)"
-    )
-    parser.add_argument(
-        "--export-only", action="store_true",
-        help="Skip scraping, just export CSV files from existing DB"
-    )
-    parser.add_argument(
-        "--db", default=str(DEFAULT_DB_PATH),
-        help=f"Path to SQLite DB (default: {DEFAULT_DB_PATH})"
-    )
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo",        choices=["qdr","icpsr","both"], default="both")
+    parser.add_argument("--max",         type=int, default=1000)
+    parser.add_argument("--export-only", action="store_true")
     args = parser.parse_args()
 
-    print("=" * 60)
-    print("QDArchive Seeding Pipeline — Part 1: Data Acquisition")
-    print(f"DB:  {args.db}")
-    print("=" * 60)
+    db.init_db()
+    print(BANNER.format(db.DB_PATH))
 
-    # ── Initialise DB ──
-    conn = init_db(args.db)
+    qdr_id   = db.upsert_repo("qdr",   "https://data.qdr.syr.edu")
+    icpsr_id = db.upsert_repo("icpsr", "https://www.icpsr.umich.edu")
 
-    if not args.export_only:
-        # ── QDR Syracuse ──
-        if args.repo in ("qdr", "both"):
-            qdr_scraper.scrape(conn, max_projects=args.max)
+    if args.export_only:
+        export_all()
+        _stats()
+        return
 
-        # ── ICPSR ──
-        if args.repo in ("icpsr", "both"):
-            icpsr_scraper.scrape(conn, max_projects=args.max)
+    if args.repo in ("qdr", "both"):
+        log.info(f"=== QDR scraper (max={args.max}) ===")
+        try:
+            n = qdr_scraper.run(qdr_id, args.max)
+            log.info(f"=== QDR done: {n} projects ===")
+        except Exception as e:
+            log.error(f"QDR failed: {e}", exc_info=True)
 
-    # ── Export to CSV ──
-    print("\n[main] Exporting tables to CSV …")
-    export_all(db_path=args.db)
+    if args.repo in ("icpsr", "both"):
+        log.info(f"=== ICPSR scraper (max={args.max}) ===")
+        try:
+            n = icpsr_scraper.run(icpsr_id, args.max)
+            log.info(f"=== ICPSR done: {n} projects ===")
+        except Exception as e:
+            log.error(f"ICPSR failed: {e}", exc_info=True)
 
-    conn.close()
-    print("\n[main] Pipeline complete.")
-    print(f"[main] Database: {args.db}")
-    print("[main] Commit everything and tag: git tag part-1-release")
+    log.info("[main] Exporting tables to CSV ...")
+    export_all()
+    _stats()
+    print(f"\n[main] Done. Database: {db.DB_PATH}")
+    print("[main] Next: git add . && git commit -m 'Part 1 complete' && git tag part-1-release && git push --tags")
+
+
+def _stats():
+    print("\n============================================================")
+    print("DATABASE SUMMARY")
+    print("============================================================")
+    db.stats()
+    print("============================================================")
 
 
 if __name__ == "__main__":

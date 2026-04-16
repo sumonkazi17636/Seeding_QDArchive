@@ -1,7 +1,0 @@
-FrequencyofFeasibilityCodeforeachSector	B	C	D	E	F	G	H	I	J
-	""	"Academia"	"Agriculture"	"Conservancy District"	"Engineering"	"Environmental Services"	"Municipal Services"	"Governmental"	"Indigenous"
-	"Accessibility"	"0.02"	"0"	"0.01"	"0.03"	"0.01"	"0.02"	"0.02"	"0.02"
-	"Cost"	"0.06"	"0.06"	"0.06"	"0.05"	"0.04"	"7.0000000000000007E-2"	"0.03"	"0.01"
-	"Reliability"	"0.11"	"0.06"	"0.08"	"0.16"	"0.05"	"0.1"	"0.11"	"7.0000000000000007E-2"
-	"Security"	"0"	"0.01"	"0.03"	"0.02"	"0.03"	"0.01"	"0.01"	"0.01"
-	"Transparency"	"0"	"0"	"0.01"	"0.02"	"0.02"	"0"	"0.02"	"0"

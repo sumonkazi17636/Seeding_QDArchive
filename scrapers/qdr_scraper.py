@@ -1,303 +1,379 @@
 """
 scrapers/qdr_scraper.py
-Scraper for the QDR Syracuse repository (data.qdr.syr.edu).
+QDR (Qualitative Data Repository, Syracuse University)
+Uses TWO methods:
+  1. OAI-PMH  — bulk harvest all metadata quickly (no login needed)
+  2. Dataverse Search API — targeted keyword queries for extra coverage
 
-QDR runs on Dataverse. We use the public Dataverse Search API (no key required)
-and the Data Access API for file downloads.
+Files: attempted via Dataverse file access API.
+       Most require login → recorded as FAILED_LOGIN_REQUIRED.
 
-Key API endpoints:
-  Search:    GET https://data.qdr.syr.edu/api/search?q=...&type=dataset&per_page=100&start=0
-  Dataset:   GET https://data.qdr.syr.edu/api/datasets/:persistentId/?persistentId=doi:...
-  Files:     GET https://data.qdr.syr.edu/api/datasets/:persistentId/versions/:latest/files
-  Download:  GET https://data.qdr.syr.edu/api/access/datafile/{file_id}
-
-Student ID: 23293505
+Student: 23293505  –  SQ26
 """
-
 import re
+import sys
 import time
+import logging
+import requests
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from pathlib import Path
 
-from db.database import (
-    insert_project, insert_file, insert_keywords,
-    insert_persons, insert_licenses, project_exists,
-)
-from pipeline.downloader import download_file, get_json
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import db.database as db
 
-# ──────────────────────────────────────────────────────────────
-# Config
-# ──────────────────────────────────────────────────────────────
+log = logging.getLogger(__name__)
 
-BASE_URL        = "https://data.qdr.syr.edu"
-REPO_FOLDER     = "qdr-syracuse"
-REPO_ID         = 1
-DOWNLOAD_METHOD = "API-CALL"
+REPO_NAME   = "qdr"
+REPO_URL    = "https://data.qdr.syr.edu"
+OAI_URL     = "https://data.qdr.syr.edu/oai"          # OAI-PMH endpoint
+API_SEARCH  = "https://data.qdr.syr.edu/api/search"
+API_DS      = "https://data.qdr.syr.edu/api/datasets"
+DATA_ROOT   = Path(__file__).parent.parent / "data" / REPO_NAME
 
+NS = {
+    "oai":  "http://www.openarchives.org/OAI/2.0/",
+    "dc":   "http://purl.org/dc/elements/1.1/",
+    "oai_dc": "http://www.openarchives.org/OAI/2.0/oai_dc/",
+}
+
+HEADERS = {"User-Agent": "SQ26-FAU-Student/1.0 (23293505@stud.uni-erlangen.de)"}
+
+# Queries for the Dataverse Search API pass (extra coverage)
 SEARCH_QUERIES = [
-    "interview",
-    "qualitative research",
-    "qdpx",
-    "interview transcript",
-    "focus group",
-    "ethnography",
-    "grounded theory",
-    "thematic analysis",
+    "qdpx", "interview qualitative", "qualitative data",
+    "focus group", "ethnograph", "oral history", "transcript",
 ]
 
-PAGE_SIZE = 100   # max per Dataverse API call
+
+# ── helpers ────────────────────────────────────────────────────────────────
+
+def _get(url, params=None, timeout=30):
+    for attempt in range(3):
+        try:
+            r = requests.get(url, params=params, headers=HEADERS, timeout=timeout)
+            if r.status_code == 200:
+                return r
+            if r.status_code in (429, 503):
+                time.sleep(10)
+            else:
+                return r
+        except requests.exceptions.RequestException as e:
+            log.warning(f"Request error (attempt {attempt+1}): {e}")
+            time.sleep(5)
+    return None
 
 
-# ──────────────────────────────────────────────────────────────
-# License normalisation (do NOT change original data —
-# we store original string; Part 2 will canonicalise)
-# ──────────────────────────────────────────────────────────────
+def _text(el, tag, ns_key):
+    found = el.find(f"{{{NS[ns_key]}}}{tag}")
+    return found.text.strip() if found is not None and found.text else ""
+
 
 def _normalise_license(raw: str) -> str:
-    """Best-effort map to professor's enum values; keep original if no match."""
-    r = raw.strip()
-    # Try well-known mappings
-    _map = {
-        "CC0 1.0":            "CC0",
-        "CC0":                "CC0",
-        "CC BY 4.0":          "CC BY 4.0",
-        "CC BY":              "CC BY",
-        "CC BY-SA 4.0":       "CC BY-SA",
-        "CC BY-SA":           "CC BY-SA",
-        "CC BY-NC 4.0":       "CC BY-NC",
-        "CC BY-NC":           "CC BY-NC",
-        "CC BY-ND 4.0":       "CC BY-ND",
-        "CC BY-ND":           "CC BY-ND",
-        "CC BY-NC-ND 4.0":    "CC BY-NC-ND",
-        "CC BY-NC-ND":        "CC BY-NC-ND",
-        "ODbL":               "ODbL",
-        "ODbL 1.0":           "ODbL-1.0",
-        "ODC-By":             "ODC-By",
-        "PDDL":               "PDDL",
+    """Store as-is per professor's rule; normalise common CC names."""
+    mappings = {
+        "cc0": "CC0", "cc-zero": "CC0", "publicdomain": "CC0",
+        "cc by": "CC BY", "cc-by": "CC BY",
+        "cc by 4.0": "CC BY 4.0", "cc-by-4.0": "CC BY 4.0",
+        "cc by-sa": "CC BY-SA", "cc-by-sa": "CC BY-SA",
+        "cc by-nc": "CC BY-NC", "cc-by-nc": "CC BY-NC",
+        "cc by-nd": "CC BY-ND", "cc-by-nd": "CC BY-ND",
+        "cc by-nc-nd": "CC BY-NC-ND", "cc-by-nc-nd": "CC BY-NC-ND",
+        "odbl": "ODbL", "odc-by": "ODC-By", "pddl": "PDDL",
     }
-    return _map.get(r, r)  # fall back to original
+    key = raw.lower().strip()
+    return mappings.get(key, raw)  # store as-is if unknown
 
 
-# ──────────────────────────────────────────────────────────────
-# API helpers
-# ──────────────────────────────────────────────────────────────
+def _try_download(file_id: int, fname: str, dest: Path) -> str:
+    """Attempt download; detect login walls honestly."""
+    url = f"{REPO_URL}/api/access/datafile/{file_id}"
+    r = _get(url, timeout=60)
+    if r is None:
+        return "FAILED_SERVER_UNRESPONSIVE"
+    if r.status_code in (401, 403):
+        return "FAILED_LOGIN_REQUIRED"
+    ct = r.headers.get("Content-Type", "")
+    if "text/html" in ct:
+        return "FAILED_LOGIN_REQUIRED"
+    if r.status_code >= 500:
+        return "FAILED_SERVER_UNRESPONSIVE"
+    cl = int(r.headers.get("Content-Length", 0))
+    if cl > 500 * 1024 * 1024:
+        return "FAILED_TOO_LARGE"
+    dest.mkdir(parents=True, exist_ok=True)
+    with open(dest / fname, "wb") as f:
+        for chunk in r.iter_content(65536):
+            f.write(chunk)
+    return "SUCCEEDED"
 
-def _search_datasets(query: str, start: int = 0) -> dict | None:
-    url = f"{BASE_URL}/api/search"
-    params = {
-        "q":        query,
-        "type":     "dataset",
-        "per_page": PAGE_SIZE,
-        "start":    start,
+
+def _save_project(pid_str: str, meta: dict, query: str, repo_id: int):
+    """Insert project + related rows into DB."""
+    proj_url = meta.get("url") or f"{REPO_URL}/dataset.xhtml?persistentId={pid_str}"
+    if db.project_exists(proj_url):
+        return None
+
+    folder = re.sub(r"[^\w\-]", "_", pid_str)
+    row = {
+        "query_string":               query,
+        "repository_id":              repo_id,
+        "repository_url":             REPO_URL,
+        "project_url":                proj_url,
+        "version":                    None,
+        "title":                      meta.get("title") or "Untitled",
+        "description":                meta.get("description") or meta.get("title") or "No description",
+        "language":                   meta.get("language"),
+        "doi":                        meta.get("doi"),
+        "upload_date":                meta.get("upload_date"),
+        "download_date":              datetime.now(timezone.utc).isoformat(),
+        "download_repository_folder": REPO_NAME,
+        "download_project_folder":    folder,
+        "download_version_folder":    None,
+        "download_method":            meta.get("method", "API-CALL"),
     }
-    return get_json(url, params)
+    project_id = db.insert_project(row)
+
+    for name in meta.get("authors", []):
+        db.insert_person(project_id, name, "AUTHOR")
+    db.insert_keywords(project_id, meta.get("keywords", []))
+    if meta.get("license"):
+        db.insert_license(project_id, meta["license"])
+
+    # Attempt file downloads
+    dest_folder = DATA_ROOT / folder
+    files = meta.get("files", [])
+    if files:
+        for f in files:
+            status = _try_download(f["id"], f["name"], dest_folder)
+            ftype  = Path(f["name"]).suffix.lstrip(".").lower() or "bin"
+            db.insert_file(project_id, f["name"], ftype, status)
+            log.info(f"  [{status}] {f['name']}")
+            time.sleep(0.3)
+    else:
+        db.insert_file(project_id, f"{folder}.zip", "zip", "FAILED_LOGIN_REQUIRED")
+
+    return project_id
 
 
-def _get_dataset_metadata(persistent_id: str) -> dict | None:
-    url = f"{BASE_URL}/api/datasets/:persistentId/"
-    return get_json(url, {"persistentId": persistent_id})
+# ── METHOD 1: OAI-PMH harvest ──────────────────────────────────────────────
+
+def _oai_list_records(resumption_token=None):
+    """Fetch one page of OAI-PMH records. Returns (records_xml, next_token)."""
+    if resumption_token:
+        params = {"verb": "ListRecords", "resumptionToken": resumption_token}
+    else:
+        params = {"verb": "ListRecords", "metadataPrefix": "oai_dc"}
+    r = _get(OAI_URL, params=params, timeout=60)
+    if r is None:
+        return [], None
+    try:
+        root = ET.fromstring(r.content)
+    except ET.ParseError as e:
+        log.error(f"XML parse error: {e}")
+        return [], None
+
+    records = root.findall(".//oai:record", NS)
+    token_el = root.find(".//oai:resumptionToken", NS)
+    next_token = token_el.text.strip() if token_el is not None and token_el.text else None
+    return records, next_token
 
 
-def _get_dataset_files(persistent_id: str) -> list:
-    url = f"{BASE_URL}/api/datasets/:persistentId/versions/:latest/files"
-    result = get_json(url, {"persistentId": persistent_id})
-    if result and result.get("status") == "OK":
-        return result.get("data", [])
-    return []
+def _parse_oai_record(record) -> dict | None:
+    """Parse one OAI-PMH <record> into a metadata dict."""
+    header = record.find("oai:header", NS)
+    if header is not None and header.attrib.get("status") == "deleted":
+        return None
 
+    identifier = ""
+    id_el = record.find("oai:header/oai:identifier", NS)
+    if id_el is not None and id_el.text:
+        identifier = id_el.text.strip()
 
-def _extract_meta(ds_meta: dict) -> dict:
-    """Pull structured fields from the Dataverse dataset metadata blob."""
-    data = ds_meta.get("data", {})
+    metadata = record.find("oai:metadata", NS)
+    if metadata is None:
+        return None
+    dc = metadata.find("oai_dc:dc", NS)
+    if dc is None:
+        # Try without namespace
+        dc = metadata.find("{http://www.openarchives.org/OAI/2.0/oai_dc/}dc")
+    if dc is None:
+        return None
 
-    # Latest version fields
-    latest = data.get("latestVersion", {})
-    citation_block = {}
-    for block in latest.get("metadataBlocks", {}).values():
-        for field in block.get("fields", []):
-            citation_block[field["typeName"]] = field
+    def dc_vals(tag):
+        return [el.text.strip() for el in dc.findall(f"dc:{tag}", NS) if el.text and el.text.strip()]
 
-    def _get(field_name, sub=None):
-        f = citation_block.get(field_name, {})
-        val = f.get("value")
-        if val is None:
-            return None
-        if sub and isinstance(val, list):
-            results = []
-            for item in val:
-                v = item.get(sub, {}).get("value") if isinstance(item, dict) else None
-                if v:
-                    results.append(v)
-            return results
-        return val
+    title       = dc_vals("title")
+    description = dc_vals("description")
+    creators    = dc_vals("creator")
+    subjects    = dc_vals("subject")
+    dates       = dc_vals("date")
+    identifiers = dc_vals("identifier")
+    rights      = dc_vals("rights")
+    languages   = dc_vals("language")
 
-    title       = _get("title") or "Untitled"
-    description_list = _get("dsDescription", "dsDescriptionValue") or []
-    description = " ".join(description_list) if description_list else None
-    language    = (_get("language") or [None])[0]
+    doi_url = None
+    proj_url = None
+    for ident in identifiers:
+        if "doi.org" in ident or ident.startswith("doi:"):
+            doi_url = ident if ident.startswith("http") else "https://doi.org/" + ident.replace("doi:","")
+        if "data.qdr.syr.edu" in ident:
+            proj_url = ident
 
-    # Authors
-    authors_raw = _get("author", "authorName") or []
-    persons = [{"name": a, "role": "AUTHOR"} for a in authors_raw]
+    if not proj_url and doi_url:
+        proj_url = doi_url
+    if not proj_url:
+        proj_url = f"{REPO_URL}/dataset.xhtml?persistentId={identifier}"
 
-    # Keywords
-    keywords_raw = _get("keyword", "keywordValue") or []
-    subjects_raw = _get("subject") or []
-    keywords = list(keywords_raw) + (subjects_raw if isinstance(subjects_raw, list) else [subjects_raw])
-
-    # License
-    license_str = latest.get("license", {})
-    if isinstance(license_str, dict):
-        license_str = license_str.get("name", "")
-    licenses = [_normalise_license(license_str)] if license_str else []
-
-    # Dates
-    upload_date_raw = data.get("publicationDate") or latest.get("releaseTime")
-    upload_date = None
-    if upload_date_raw:
-        try:
-            upload_date = upload_date_raw[:10]  # YYYY-MM-DD
-        except Exception:
-            pass
-
-    doi = data.get("persistentUrl") or None
+    license_str = ""
+    for r_val in rights:
+        if any(cc in r_val.upper() for cc in ["CC", "CREATIVE", "ODC", "PDDL", "PUBLIC DOMAIN"]):
+            license_str = _normalise_license(r_val)
+            break
 
     return {
-        "title":       title,
-        "description": description,
-        "language":    language,
-        "persons":     persons,
-        "keywords":    keywords,
-        "licenses":    licenses,
-        "upload_date": upload_date,
-        "doi":         doi,
+        "url":         proj_url,
+        "doi":         doi_url,
+        "title":       title[0] if title else identifier,
+        "description": " ".join(description) or (title[0] if title else "No description"),
+        "authors":     creators,
+        "keywords":    subjects,
+        "upload_date": dates[0][:10] if dates else None,
+        "license":     license_str,
+        "language":    languages[0] if languages else None,
+        "files":       [],        # OAI gives no file list; we'll try API separately
+        "method":      "API-CALL",
     }
 
 
-# ──────────────────────────────────────────────────────────────
-# Main scrape entry point
-# ──────────────────────────────────────────────────────────────
+def _oai_harvest(repo_id: int, max_projects: int) -> int:
+    """Harvest all QDR projects via OAI-PMH."""
+    log.info("[QDR/OAI] Starting OAI-PMH harvest …")
+    count = 0
+    token = None
+    page  = 0
 
-def scrape(conn, max_projects: int = 500) -> None:
-    """
-    Run the QDR scraper:
-      1. For each query, paginate through the Dataverse Search API.
-      2. For each unique dataset, fetch detailed metadata.
-      3. Download all associated files.
-      4. Record everything in the SQLite database.
+    while True:
+        records, token = _oai_list_records(token)
+        page += 1
+        log.info(f"[QDR/OAI] Page {page}: {len(records)} records (token={'yes' if token else 'none'})")
 
-    conn       : sqlite3.Connection from db.database.init_db()
-    max_projects: safety cap — stop after this many NEW projects recorded.
-    """
-    print(f"\n{'='*60}")
-    print(f"QDR Syracuse Scraper  ({BASE_URL})")
-    print(f"{'='*60}")
+        for rec in records:
+            if count >= max_projects:
+                log.info(f"[QDR/OAI] Reached limit ({max_projects})")
+                return count
+            meta = _parse_oai_record(rec)
+            if not meta:
+                continue
+            pid = _save_project(meta["url"], meta, "oai-harvest", repo_id)
+            if pid:
+                count += 1
+                log.info(f"[QDR/OAI] #{count} saved: {meta['title'][:60]}")
 
-    seen_ids  = set()  # persistent IDs already processed this run
-    new_count = 0
+        time.sleep(1)
+        if not token:
+            break
+
+    log.info(f"[QDR/OAI] Done. {count} projects saved.")
+    return count
+
+
+# ── METHOD 2: Dataverse Search API (fills gaps) ───────────────────────────
+
+def _get_ds_files(persistent_id: str) -> list:
+    url = f"{API_DS}/:persistentId/versions/:latest/files"
+    r = _get(url, params={"persistentId": persistent_id})
+    if r is None or r.status_code != 200:
+        return []
+    try:
+        data = r.json().get("data", [])
+        return [
+            {"id": f["dataFile"]["id"], "name": f["dataFile"]["filename"]}
+            for f in data if "dataFile" in f
+        ]
+    except Exception:
+        return []
+
+
+def _api_search_harvest(repo_id: int, max_extra: int) -> int:
+    """Use Dataverse Search API for targeted queries to find extra projects."""
+    log.info("[QDR/API] Running targeted keyword queries …")
+    count = 0
 
     for query in SEARCH_QUERIES:
-        if new_count >= max_projects:
-            break
-        print(f"\n[query] '{query}'")
         start = 0
-        total = None
-
-        while True:
-            if new_count >= max_projects:
+        while count < max_extra:
+            r = _get(API_SEARCH, params={
+                "q": query, "type": "dataset",
+                "per_page": 25, "start": start,
+                "sort": "date", "order": "desc",
+            })
+            if r is None:
                 break
-
-            result = _search_datasets(query, start)
-            if not result or result.get("status") != "OK":
-                print(f"  [warn] no results or API error for query='{query}' start={start}")
+            try:
+                data = r.json().get("data", {})
+            except Exception:
                 break
-
-            data       = result.get("data", {})
-            items      = data.get("items", [])
-            if total is None:
-                total = data.get("total_count", 0)
-                print(f"  total_count={total}")
-
+            items = data.get("items", [])
             if not items:
                 break
 
             for item in items:
-                if new_count >= max_projects:
+                if count >= max_extra:
                     break
-
-                pid = item.get("global_id") or item.get("identifier")
-                if not pid or pid in seen_ids:
-                    continue
-                seen_ids.add(pid)
-
-                project_url = item.get("url", "")
-                if not project_url:
+                pid  = item.get("global_id", "")
+                purl = item.get("url") or f"{REPO_URL}/dataset.xhtml?persistentId={pid}"
+                if db.project_exists(purl):
                     continue
 
-                # Skip if already in DB (idempotent across runs)
-                if project_exists(conn, project_url):
-                    print(f"  [dup] {pid} already in DB")
-                    continue
+                doi_url = f"https://doi.org/{pid[4:]}" if pid.startswith("doi:") else None
+                lic_raw = ""
+                try:
+                    ds_r = _get(f"{API_DS}/:persistentId/", params={"persistentId": pid})
+                    if ds_r and ds_r.status_code == 200:
+                        ds_data = ds_r.json().get("data", {})
+                        lv      = ds_data.get("latestVersion", {})
+                        lic_obj = lv.get("license", {})
+                        if isinstance(lic_obj, dict):
+                            lic_raw = _normalise_license(lic_obj.get("name", ""))
+                        time.sleep(0.5)
+                except Exception:
+                    pass
 
-                print(f"\n  [project] {pid}  {item.get('name','')[:60]}")
+                files = _get_ds_files(pid) if pid else []
+                time.sleep(0.5)
 
-                # ── Fetch detailed metadata ──
-                meta_resp = _get_dataset_metadata(pid)
-                if not meta_resp:
-                    print(f"    [warn] could not fetch metadata for {pid}")
-                    continue
-                meta = _extract_meta(meta_resp)
-
-                # Build project folder name from PID (strip doi: prefix, replace / with -)
-                proj_folder = re.sub(r"[^A-Za-z0-9_.\-]", "-", pid.replace("doi:", ""))
-
-                now_ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-                project_row = {
-                    "query_string":               query,
-                    "repository_id":              REPO_ID,
-                    "repository_url":             BASE_URL,
-                    "project_url":                project_url,
-                    "version":                    None,
-                    "title":                      meta["title"],
-                    "description":                meta["description"],
-                    "language":                   meta["language"],
-                    "doi":                        meta["doi"],
-                    "upload_date":                meta["upload_date"],
-                    "download_date":              now_ts,
-                    "download_repository_folder": REPO_FOLDER,
-                    "download_project_folder":    proj_folder,
-                    "download_version_folder":    None,
-                    "download_method":            DOWNLOAD_METHOD,
+                meta = {
+                    "url":         purl,
+                    "doi":         doi_url,
+                    "title":       item.get("name", "Untitled"),
+                    "description": item.get("description", item.get("name", "No description")),
+                    "authors":     [],
+                    "keywords":    [],
+                    "upload_date": (item.get("published_at") or "")[:10] or None,
+                    "license":     lic_raw,
+                    "language":    None,
+                    "files":       files,
+                    "method":      "API-CALL",
                 }
-                project_id = insert_project(conn, project_row)
-                insert_keywords(conn, project_id, meta["keywords"])
-                insert_persons(conn,   project_id, meta["persons"])
-                insert_licenses(conn,  project_id, meta["licenses"])
+                pid_saved = _save_project(pid, meta, query, repo_id)
+                if pid_saved:
+                    count += 1
+                    log.info(f"[QDR/API] #{count} saved: {meta['title'][:60]}")
 
-                # ── Download files ──
-                files = _get_dataset_files(pid)
-                print(f"    {len(files)} file(s) to download")
-                for f in files:
-                    fname    = f.get("dataFile", {}).get("filename", "unknown")
-                    file_id  = f.get("dataFile", {}).get("id")
-                    download_url = f"{BASE_URL}/api/access/datafile/{file_id}"
+            start += 25
+            time.sleep(1)
 
-                    ext = fname.rsplit(".", 1)[-1].lower() if "." in fname else ""
+    return count
 
-                    status = download_file(
-                        url=download_url,
-                        repo_folder=REPO_FOLDER,
-                        project_folder=proj_folder,
-                        filename=fname,
-                    )
-                    insert_file(conn, project_id, fname, ext, status)
 
-                new_count += 1
-                print(f"    [recorded] project_id={project_id} ({new_count}/{max_projects})")
+# ── main entry point ───────────────────────────────────────────────────────
 
-            # Pagination
-            start += PAGE_SIZE
-            if start >= total:
-                break
-
-    print(f"\n[qdr] Done. {new_count} new projects recorded.")
+def run(repo_id: int, max_projects: int = 1000) -> int:
+    DATA_ROOT.mkdir(parents=True, exist_ok=True)
+    n = _oai_harvest(repo_id, max_projects)
+    # fill remaining slots with targeted API queries
+    remaining = max_projects - n
+    if remaining > 0:
+        n += _api_search_harvest(repo_id, remaining)
+    return n

@@ -1,49 +1,31 @@
 """
-pipeline/downloader.py
-Handles actual HTTP downloads, with retry logic and failure classification.
+pipeline/downloader.py  —  HTTP download engine
 Student ID: 23293505
 """
 
-import os
 import time
 import requests
 from pathlib import Path
 
-# ──────────────────────────────────────────────────────────────
-# Config
-# ──────────────────────────────────────────────────────────────
+DATA_ROOT   = Path(__file__).resolve().parents[1] / "data"
+MAX_MB      = 500
+TIMEOUT     = 30
+RETRIES     = 3
+RETRY_WAIT  = 5
+RATE_DELAY  = 1.0
 
-DATA_ROOT    = Path(__file__).resolve().parents[1] / "data"
-MAX_FILE_MB  = 500          # Files larger than this → FAILED_TOO_LARGE
-TIMEOUT_SEC  = 30           # Per request timeout
-RETRY_COUNT  = 3            # How many times to retry on transient error
-RETRY_DELAY  = 5            # Seconds between retries
-RATE_DELAY   = 1.0          # Courtesy delay between requests (seconds)
-
-# Friendly headers to avoid being blocked
 HEADERS = {
     "User-Agent": (
-        "Mozilla/5.0 (compatible; QDArchiveSeedBot/1.0; "
-        "+https://github.com/sumonkazi17636/Seeding_QDArchive)"
+        "QDArchiveSeedBot/1.0 (FAU Erlangen SQ26; "
+        "github.com/sumonkazi17636/Seeding_QDArchive)"
     )
 }
 
-
-# ──────────────────────────────────────────────────────────────
-# Helpers
-# ──────────────────────────────────────────────────────────────
-
-def _make_session() -> requests.Session:
-    session = requests.Session()
-    session.headers.update(HEADERS)
-    return session
+SESSION = requests.Session()
+SESSION.headers.update(HEADERS)
 
 
-SESSION = _make_session()
-
-
-def _classify_error(exc: Exception, response=None) -> str:
-    """Map an exception / HTTP response to a DOWNLOAD_RESULT enum value."""
+def _classify(exc=None, response=None):
     if response is not None:
         if response.status_code in (401, 403):
             return "FAILED_LOGIN_REQUIRED"
@@ -52,99 +34,80 @@ def _classify_error(exc: Exception, response=None) -> str:
     if isinstance(exc, (requests.exceptions.ConnectionError,
                          requests.exceptions.Timeout)):
         return "FAILED_SERVER_UNRESPONSIVE"
-    return "FAILED_SERVER_UNRESPONSIVE"  # safe default
+    return "FAILED_SERVER_UNRESPONSIVE"
 
 
-# ──────────────────────────────────────────────────────────────
-# Public API
-# ──────────────────────────────────────────────────────────────
-
-def download_file(
-    url: str,
-    repo_folder: str,
-    project_folder: str,
-    filename: str,
-    version_folder: str = "",
-) -> str:
+def download_file(url, repo_folder, project_folder, filename, version_folder=""):
     """
-    Download a file to:
-        data/{repo_folder}/{project_folder}[/{version_folder}]/{filename}
-
-    Returns one of the DOWNLOAD_RESULT enum values:
-        SUCCEEDED | FAILED_LOGIN_REQUIRED | FAILED_SERVER_UNRESPONSIVE | FAILED_TOO_LARGE
+    Download one file to  data/{repo_folder}/{project_folder}/{filename}
+    Returns a DOWNLOAD_RESULT enum string.
     """
-    # Build local path
     parts = [DATA_ROOT, repo_folder, project_folder]
     if version_folder:
         parts.append(version_folder)
     dest_dir = Path(*parts)
     dest_dir.mkdir(parents=True, exist_ok=True)
-    dest_path = dest_dir / filename
+    dest = dest_dir / filename
 
-    # Skip if already downloaded (idempotent)
-    if dest_path.exists() and dest_path.stat().st_size > 0:
-        print(f"  [skip] already exists: {dest_path.relative_to(DATA_ROOT)}")
+    if dest.exists() and dest.stat().st_size > 0:
+        print(f"  [skip] {filename} already exists")
         return "SUCCEEDED"
 
-    # Check Content-Length before downloading to catch FAILED_TOO_LARGE
+    # Check size via HEAD
     try:
-        head = SESSION.head(url, timeout=TIMEOUT_SEC, allow_redirects=True)
-        content_length = int(head.headers.get("Content-Length", 0))
-        if content_length > MAX_FILE_MB * 1024 * 1024:
-            print(f"  [skip-large] {filename}: {content_length / 1e6:.0f} MB > {MAX_FILE_MB} MB limit")
+        head = SESSION.head(url, timeout=TIMEOUT, allow_redirects=True)
+        cl   = int(head.headers.get("Content-Length", 0))
+        if cl > MAX_MB * 1024 * 1024:
+            print(f"  [too-large] {filename}: {cl/1e6:.0f} MB")
             return "FAILED_TOO_LARGE"
         if head.status_code in (401, 403):
             return "FAILED_LOGIN_REQUIRED"
     except Exception:
-        pass  # HEAD not always supported; proceed to GET
+        pass
 
-    # Download with retry
-    for attempt in range(1, RETRY_COUNT + 1):
+    for attempt in range(1, RETRIES + 1):
         try:
-            resp = SESSION.get(url, timeout=TIMEOUT_SEC, stream=True)
+            resp = SESSION.get(url, timeout=TIMEOUT, stream=True)
             if resp.status_code == 200:
                 downloaded = 0
-                with open(dest_path, "wb") as f:
-                    for chunk in resp.iter_content(chunk_size=65536):
+                with open(dest, "wb") as f:
+                    for chunk in resp.iter_content(65536):
                         downloaded += len(chunk)
-                        if downloaded > MAX_FILE_MB * 1024 * 1024:
+                        if downloaded > MAX_MB * 1024 * 1024:
                             f.close()
-                            dest_path.unlink(missing_ok=True)
+                            dest.unlink(missing_ok=True)
                             return "FAILED_TOO_LARGE"
                         f.write(chunk)
-                print(f"  [ok] {filename} ({downloaded / 1024:.1f} KB)")
+                print(f"  [ok] {filename} ({downloaded/1024:.1f} KB)")
                 time.sleep(RATE_DELAY)
                 return "SUCCEEDED"
             else:
-                status = _classify_error(None, resp)
-                if attempt < RETRY_COUNT and status == "FAILED_SERVER_UNRESPONSIVE":
-                    print(f"  [retry {attempt}] HTTP {resp.status_code} for {filename}")
-                    time.sleep(RETRY_DELAY)
+                s = _classify(response=resp)
+                if attempt < RETRIES and s == "FAILED_SERVER_UNRESPONSIVE":
+                    time.sleep(RETRY_WAIT)
                     continue
-                return status
+                return s
         except Exception as exc:
-            status = _classify_error(exc)
-            if attempt < RETRY_COUNT:
-                print(f"  [retry {attempt}] {exc} for {filename}")
-                time.sleep(RETRY_DELAY)
+            s = _classify(exc=exc)
+            if attempt < RETRIES:
+                time.sleep(RETRY_WAIT)
             else:
-                print(f"  [fail] {exc} for {filename}")
-                return status
+                return s
 
     return "FAILED_SERVER_UNRESPONSIVE"
 
 
-def get_json(url: str, params: dict = None) -> dict | None:
-    """GET a JSON endpoint with retries. Returns parsed dict or None on failure."""
-    for attempt in range(1, RETRY_COUNT + 1):
+def get_json(url, params=None):
+    """GET a JSON endpoint. Returns parsed dict or None."""
+    for attempt in range(1, RETRIES + 1):
         try:
-            resp = SESSION.get(url, params=params, timeout=TIMEOUT_SEC)
+            resp = SESSION.get(url, params=params, timeout=TIMEOUT)
             resp.raise_for_status()
             time.sleep(RATE_DELAY)
             return resp.json()
         except Exception as exc:
-            if attempt < RETRY_COUNT:
-                time.sleep(RETRY_DELAY)
+            if attempt < RETRIES:
+                time.sleep(RETRY_WAIT)
             else:
                 print(f"  [get_json fail] {url}: {exc}")
                 return None
