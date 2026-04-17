@@ -43,6 +43,11 @@ HEADERS = {"User-Agent": "SQ26-FAU-Student/1.0 (23293505@stud.uni-erlangen.de)"}
 SEARCH_QUERIES = [
     "qdpx", "interview qualitative", "qualitative data",
     "focus group", "ethnograph", "oral history", "transcript",
+    "narrative", "case study", "fieldwork", "discourse",
+    "participant", "survey", "election", "political",
+    "health", "education", "gender", "migration",
+    "conflict", "governance", "democracy", "poverty",
+    "*",
 ]
 
 
@@ -369,11 +374,70 @@ def _api_search_harvest(repo_id: int, max_extra: int) -> int:
 
 # ── main entry point ───────────────────────────────────────────────────────
 
+def _fetch_files_for_existing(repo_id: int) -> int:
+    """Fetch real file lists for all existing QDR projects that have no files."""
+    import sqlite3
+    log.info("[QDR/FILES] Fetching file lists for existing projects ...")
+    conn = sqlite3.connect(db.DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT p.id, p.doi, p.download_project_folder
+        FROM projects p
+        WHERE p.repository_id = ?
+        AND p.doi IS NOT NULL
+    """, (repo_id,))
+    projects = cur.fetchall()
+    conn.close()
+
+    total = 0
+    for i, proj in enumerate(projects):
+        pid    = proj["id"]
+        doi    = proj["doi"]
+        folder = proj["download_project_folder"]
+
+        if doi.startswith("https://doi.org/"):
+            persistent_id = "doi:" + doi.replace("https://doi.org/", "")
+        else:
+            persistent_id = doi
+
+        files = _get_ds_files(persistent_id)
+        if not files:
+            time.sleep(0.3)
+            continue
+
+        # Check existing filenames for this project
+        conn2 = sqlite3.connect(db.DB_PATH)
+        cur2  = conn2.cursor()
+        cur2.execute("SELECT file_name FROM files WHERE project_id=?", (pid,))
+        existing = {r[0] for r in cur2.fetchall()}
+        conn2.close()
+
+        dest = DATA_ROOT / folder
+        for f in files:
+            fname = f["name"]
+            if fname in existing:
+                continue
+            ftype  = Path(fname).suffix.lstrip(".").lower() or "bin"
+            status = _try_download(f["id"], fname, dest)
+            db.insert_file(pid, fname, ftype, status)
+            total += 1
+            log.info(f"[QDR/FILES] [{status}] {fname}")
+            time.sleep(0.3)
+
+        log.info(f"[QDR/FILES] [{i+1}/{len(projects)}] processed {folder}")
+        time.sleep(0.5)
+
+    log.info(f"[QDR/FILES] Done. {total} new files recorded.")
+    return total
+
+
 def run(repo_id: int, max_projects: int = 1000) -> int:
     DATA_ROOT.mkdir(parents=True, exist_ok=True)
     n = _oai_harvest(repo_id, max_projects)
-    # fill remaining slots with targeted API queries
     remaining = max_projects - n
     if remaining > 0:
         n += _api_search_harvest(repo_id, remaining)
+    # Always fetch real files for existing projects
+    _fetch_files_for_existing(repo_id)
     return n
