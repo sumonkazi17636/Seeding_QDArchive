@@ -1,0 +1,33 @@
+--- 
+title: "IASGE Survey Analysis"
+author: "Vicky Steeves, Sarah Nguyen"
+date: "`r Sys.Date()`"
+description: "The scripts and documentation for our survey analysis."
+site: bookdown::bookdown_site
+colorlinks: yes
+documentclass: book
+always_allow_html: yes
+output:
+  bookdown::gitbook:
+    css: [style.css]
+    config:
+      toc:
+        before: |
+          <p><a href="">IASGE Survey Analysis</a></p>
+        after: |
+          <p><a href="https://gitlab.com/RLesur/bookdown-gitlab-pages" target="blank">Published with bookdown &amp; GitLab</a></p>
+          <p>Code licensed <a href="https://gitlab.com/investigating-archiving-git/survey-analysis/LICENSE">MIT</a></p>
+          <p>Original documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+          <p>Any questions, contact: <a href="mailto:vicky.steeves@nyu.edu">vicky.steeves@nyu.edu</a></p>
+      edit: https://gitlab.com/investigating-archiving-git/survey-analysis/edit/master/%s
+      search: yes
+      download: ["pdf"]
+      sharing: null
+  bookdown::pdf_book:
+    latex_engine: xelatex
+  bookdown::epub_book: default
+---
+
+# About  {-}
+
+This book focuses on preparing and analyzing survey data downloaded from Qualtrics for analysis, as a part of the [Investigating & Archiving the Scholarly Git Experience](https://investigating-archiving-git.gitlab.io/) project.

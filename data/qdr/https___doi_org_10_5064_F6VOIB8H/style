@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Quattrocento');
+
+.book.font-family-1 {
+    font-family: 'Nunito', sans-serif;
+}
+
+.book.font-family-0 {
+  font-family: 'Quattrocento', serif;
+}
+
+.book .book-header, .book .book-summary {
+    font-family: 'Nunito', sans-serif;
+}
+
+.summary p{
+  padding-left: 0.8em;
+  padding-right: 0.2em;
+}
+
+
+.book .book-body .page-wrapper .page-inner section.normal table {
+  width:auto;
+}

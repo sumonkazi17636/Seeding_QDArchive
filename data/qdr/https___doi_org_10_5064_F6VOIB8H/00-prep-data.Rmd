@@ -1,0 +1,234 @@
+# Prep Data {-}
+
+## Load packages {-}
+
+To ensure reproducibility, we're going to install the packages we need at the very start of the script, to make sure everyone has the same dependencies loaded up.
+
+If you are running Linux, you'll need to install some dependencies of `tidyverse` before running the first cell, which can be done with this command: `sudo apt-get install libcurl4 libcurl4-openssl-dev libssl-dev libxml2-dev`
+
+```{r setup, echo = T, results = 'hide'}
+# Packages needed
+packages <- c("tidyverse", "here", "ggplot2", "knitr", "RCurl", 
+              "kableExtra", "tidytext", "ggpubr", "stringr")
+
+# Write a function to install the packages if they haven't been 
+# installed, and to load the packages
+install <- function(pack) {
+  if(!requireNamespace(pack)) {
+    install.packages(pack, repos = "https://cloud.r-project.org")
+  }
+}
+
+# Run the function to install and load needed packages 
+sapply(packages, install)
+sapply(packages, require, character.only = T)
+```
+
+## Read data {-}
+
+We need to set the working directory to relative to where this file is located, so we can ensure that (when downloaded) the script will run as intended without much overhead for secondary users.
+
+```{r read_data, echo = T, results = 'hide'}
+# set the working directory relative to this file
+here::here()
+
+# read in the full dataset
+full_output <- read.csv("../IASGE-raw-survey.csv")
+```
+
+## Trim data {-}
+
+We filtered the qualtrics export to only include responses where participants responded yes the following:
+
++ Q1: informed consent, 
++ Q2: they currently work in academia, 
++ Q3: they write code as a part of their work in academia, and 
++ Q4: they use a version control system to manage their code
+
+If participants said no to any of the above, their responses were not included in the export. Thus, we could remove Q1 (informed consent) from our dataframe below. We also removed Q54, which asked if participants would be willing to be interviewed, because it's irrelevant to the survey results and analysis. We also removed Q9, as there were no answers and was irrelevant for the rest of the analysis.
+
+Lastly, we removed the superfluous columns that Qualtrics gives us automatically that we do not need for our analysis, such as the duration of time it took the participants to complete the survey.
+
+```{r remove_col, echo = T, results = 'hide'}
+output <- full_output[-(1:2), ]
+
+output <- output %>%
+  dplyr::select(-StartDate, -EndDate, -Status, -Duration..in.seconds., -Finished, -RecordedDate, 
+         -ResponseId, -DistributionChannel, -UserLanguage, -Progress, -Q1, -Q3, -Q4, -Q5, 
+         -Q9, -Q54) 
+```
+
+## Rename columns {-}
+
+Looking at dataframes of Qs would be annoying, so we renamed each variable/column header to be short and descriptive of the question, so we could more quickly understand our analyses without looking at the codebook.
+  
+```{r rename_col, echo = T, results = 'hide'}
+output <- output %>%
+  dplyr::rename(year_vcs = Q6, first_vcs = Q7, first_vcs_other = Q7_7_TEXT,
+         first_bazaar = Q8_3, first_cvs = Q8_6,
+         first_git = Q8_1, first_hg = Q8_5,
+         first_monotone = Q8_4, first_svn = Q8_2,
+         first_other = Q8_7, first_other_text = Q8_7_TEXT,
+         use_bitbucket = Q10_3, use_github = Q10_1,
+         use_gitlab = Q10_2, use_sourceforge = Q10_4,
+         use_selfhost = Q10_7, use_selfhost_text = Q10_7_TEXT,
+         use_other_platform = Q10_6, use_other_platform_text = Q10_6_TEXT,
+         use_nothing = Q10_5, why_no_platform = Q11,
+         freq_git = Q12, freq_git_text = Q12_6_TEXT,
+         freq_platform = Q13, freq_platform_text = Q13_6_TEXT,
+         use_local_gui = Q14_1, use_local_term = Q14_2,
+         use_local_other = Q14_3, use_local_other_text = Q14_3_TEXT,
+         why_vcs = Q16, why_vcs_text = Q16_4_TEXT,
+         how_learn_books = Q17_1, how_learn_credit_course = Q17_2,
+         how_learn_online_course = Q17_3, how_learn_rtfm = Q17_4,
+         how_learn_accel = Q17_5, how_learn_webinar = Q17_6,
+         how_learn_workshop = Q17_7, how_learn_other = Q17_9,
+         how_learn_other_text = Q17_9_TEXT, who_taught_git = Q18,
+         when_learn_git = Q19, when_learn_git_other = Q19_6_TEXT,
+         local_ease = Q20, ghp_ease = Q21,
+         proficiency = Q22, freq_reteach = Q23,
+         freq_reteach_text = Q23_6_TEXT, fave_resource = Q24,
+         have_taught = Q26, make_materials = Q27,
+         regularly_teach = Q28, teach_inperson = Q29_1,
+         teach_vasync = Q29_2, teach_vsync = Q29_3,
+         teach_inperson = Q29_1, teach_inperson = Q29_1,
+         improve_teaching = Q30, why_ghps = Q32,
+         why_ghps_other_text = Q32_7_TEXT, ghp_as_backup = Q33,
+         use_ci = Q34_1, use_annotation = Q34_2,
+         use_fork_pr = Q34_3, use_issues = Q34_4,
+         use_pages = Q34_5, use_boards = Q34_6,
+         use_wikis = Q34_7, use_other_feat = Q34_8,
+         use_other_feat_text = Q34_8_TEXT, how_use_ci = Q35,
+         private_fund = Q37_1, public_fund = Q37_2,
+         dontknow_fund = Q37_4, no_funds = Q37_6,
+         other_fund = Q37_5, other_fund_text= Q37_5_TEXT,
+         fund_open = Q38, scholexp_collab = Q40_1,
+         scholexp_edu = Q40_2, scholexp_method = Q40_3,
+         scholexp_peerprod = Q40_4, scholexp_peer_review = Q40_5,
+         scholexp_pub = Q40_6, scholexp_qa = Q40_7,
+         scholexp_repro = Q40_8, scholexp_other = Q40_10,
+         scholexp_other_text = Q40_10_TEXT, author_collab = Q41,
+         freq_author_collab = Q42, freq_author_collab_text = Q42_10_TEXT,
+         onboarding = Q43, how_doc = Q44,
+         aca_platform = Q45, copy_longterm = Q47,
+         archive_figshare = Q48_2, archive_ir = Q48_1,
+         archive_osf = Q48_3, archive_zenodo = Q48_4,
+         archive_sh = Q48_6, archive_other = Q48_5,
+         archive_other_text = Q48_5_TEXT, disc = Q50,
+         disc_other_text = Q50_761_TEXT, status = Q51,
+         status_other_text = Q51_4_TEXT, length_role = Q52,
+         institution = Q53, institution_other_text = Q53_4_TEXT
+         )
+```
+  
+## Recoding variables {-}
+
+We need to change some of the variables in our columns to facilitate our analysis, with two main categories, with the exception of these 3 miscellaneous cases:
+
++ local_ease: remove everything after the first digit
++ ghp_ease: remove everything after the first digit
++ proficiency: remove everything after the first digit
+
+These are likert scale questions and appear in the results as "1 - unsatisfactory" and so forth. We just really need that first digit, and since all the values match that pattern, it's easiest to just get rid of everything after that.
+
+```{r recode_misc, echo = T, results = 'hide'}
+
+output$local_ease <- sub(" .*", "", output$local_ease)
+output$ghp_ease <- sub(" .*", "", output$ghp_ease)
+output$proficiency <- sub(" .*", "", output$proficiency)
+
+```
+
+**1. recode some string to a boolean result** 
+
+During the Qualtrics export, we split multiple values into columns (to be tidy!). That meant, however, that some columns contain "0" and "$STRING" that represents the singular value (that used to be a part of a multiple). So we have to recode that string to "1" so the type of the column is the same.
+
++ first_bazaar: go from "Bazaar" to 1
++ first_git: go from "Git" to 1
++ first_cvs: go from "CVS" to 1
++ first_hg: go from "Mercurial" to 1
++ first_monotone: go from "Monotone" to 1
++ first_svn: go from "SVN" to 1
++ first_other: go from "Other" to 1
++ use_bitbucket: go from "Bitbucket" to 1
++ use_gitlab: go from "GitLab" to 1
++ use_github: go from "GitHub" to 1
++ use_sourceforge: go from "SourceForge" to 1
++ use_selfhost: go from "Self-hosted platform:" to 1
++ use_other_platform: go from "Other" to 1
++ use_local_gui: go from "Graphical user interface (e.g.GitKraken, GitHub Desktop, etc.)" to 1
++ use_local_term: go from "Terminal" to 1
++ use_local_other: go from "Other" to 1
++ how_learn_books: go from "Book, articles, or blog posts" to 1
++ how_learn_credit_course: go from "In a class (quarter/semester-long)" to 1
++ how_learn_online_course: go from "Online coding course (e.g. Codeacademy, Lynda, etc.)" to 1
++ how_learn_rtfm: go from "Online forums / RTFM (Read the f*cking manual)" to 1
++ how_learn_accel: go from "Programming accelerator (e.g. Flatiron School, General Assembly, etc.)" to 1
++ how_learn_webinar: go from "Webinar/online video" to 1
++ how_learn_workshop: go from "Workshop (e.g. Carpentries, library instruction)" to 1
++ how_learn_other: go from "Other:" to 1
++ teach_inperson: go from "In person" to 1
++ teach_vasync: go from "Virtual - asynchronous" to 1
++ teach_vsync: go from "Virtual - synchronous" to 1
++ use_ci: go from "Continuous Integration/Continuous Delivery" to 1
++ use_annotation: go from "Code review/annotation" to 1
++ use_fork_pr: go from "Forking/Pull Requests" to 1
++ use_issues: go from "Issues" to 1
++ use_pages: go from "Pages (e.g. web publishing)" to 1
++ use_boards: go from "Projects/Kanban boards" to 1
++ use_wikis: go from "Wikis" to 1
++ use_other_feat: go from "Other:" to 1
++ private_fund: go from "Privately (e.g. industry, philanthropic organizations)" to 1
++ public_fund: go from "Publicly (e.g. federal government)" to 1
++ dontknow_fund: go from "I don't know" to 1
++ no_funds: go from "I don't have funded research right now" to 1
++ other_funds: go from "Other:" to 1
++ scholexp_collab: go from "Community & collaboration" to 1
++ scholexp_edu: go from "Education" to 1
++ scholexp_method: go from "Method tracking" to 1
++ scholexp_peerprod: go from "Peer production" to 1
++ scholexp_peer_review: go from "Peer review (e.g. using platforms like GitLab, GitHub, etc. to review source code or articles. Journals such as JOSS)" to 1
++ scholexp_pub: go from "Publishing scholarship" to 1
++ scholexp_qa: go from "Quality assurance" to 1
++ scholexp_repro: go from "Reproducibility" to 1
++ scholexp_other: go from "Other" to 1
++ archive_figshare: go from "Figshare" to 1
++ archive_ir: go from "Institutional Repository (IR)" to 1
++ archive_osf: go from "Open Science Framework" to 1
++ archive_sh: go from "Software Heritage" to 1
++ archive_zenodo: go from "Zenodo" to 1
++ archive_other: go from "Other:" to 1
+
+```{r recode_strings, echo = T, results = 'hide'}
+
+# code courtesy of Christopher Schwarz, 
+# PhD student in Politics at NYU and Data Services Lead Student Consultant for quant
+# thank you Chris!!
+
+# gets the column indices for columns that either have either text or "0" 
+# which is what we want to convert (e.g. the text into "1")
+cols <- apply(output,2,FUN=function(x) "0" %in% x)
+
+# replace the elements of those columns with 1 if they have more than one character
+output[,cols] <- apply(output[,cols],2,FUN=function(x)replace(x,nchar(x)>1,1))
+
+# replace blanks with NA
+output[,cols] <- apply(output[,cols],2,FUN=function(x)replace(x,nchar(x)==0,NA))
+
+# make the columns numeric
+output[,cols] <- apply(output[,cols],2,FUN=function(x)as.numeric(x))
+```
+
+## Write out new CSV {-}
+
+Now we'll write the cleaned dataframe `output` to a new CSV, which we can then use to subset and analyze the data.
+
+```{r write_cleaned, echo = T, results = 'hide'}
+
+write.csv(output, file="results/processed-survey.csv")
+
+```
+
+## Acknowledgements {-}
+
+Some of this code for cleaning Qualtrics survey data is reused from the following repository, which uses a MIT license, Copyright (c) 2019 Kyle Cranmer:  https://github.com/ds3-nyu/Needs-Assessment-Survey-Template. The code to recode the strings to '1' in many columns comes from Christopher Schwarz, PhD student at New York Unviersity in the politics department. Chris also works at NYU Libraries as a lead student consultant for data services, and helped me in that capacity.

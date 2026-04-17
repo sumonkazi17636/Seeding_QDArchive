@@ -1,0 +1,25 @@
+**Title**
+Data for: Women Insurgents, Rebel Organization Structure and Sustaining the Rebellion:  The Case of Kurdistan Workers’ Party
+**Suggested Citation**
+Please cite any data used from this data project as follows: 
+Baser, Caglayan. 2022. "Data for: Women Insurgents, Rebel Organization Structure and Sustaining the Rebellion:  The Case of Kurdistan Workers’ Party". Qualitative Data Repository. https://doi.org/10.5064/F6TZKMDU. Security Studies.
+**Description**
+Project Summary:
+How do women insurgents affect rebel organizations’ structure and survivability? Scholars acknowledge the importance of organization-level dynamics and unit composition for conflict outcomes. However, our understanding of how gender-diverse cadres impact rebel survivability remains limited. I examine the mechanisms through which women sustain the armed conflict. I analyze micro-organizational dynamics of rebellion through a qualitative case study of the Kurdish armed movement in Turkey between 1982-2015, based on the official archives of the Kurdistan Workers’ Party. I show that women insurgents enable tactical diversity, aid the organization’s coupproofing strategy against factions, and mobilize domestic and international audiences. Women contribute most to their organization during crises and due to exploitation of gender inequalities. Analyzing the relationship between gender dynamics, group structure, and evolving rebel strategies, this study shows that the gender of the membership is an important factor influencing rebel survivability.
+Data Overview:
+The analysis of this article primarily relies on the PKK’s (Kurdistan Workers' Party – Partiya Karkaren Kurdistan) official monthly bulletin Serxwebun from 1982-2015, containing over ten thousand pages of primary source material in Turkish. Serxwebun publishes the leader’s declarations, decisions taken in conventions, essays by PKK’s sub-committees and militants, militants’ diaries, and obituaries of fallen fighters. Each issue ranges between 30-35 pages. It provides a rich source to understand the organization’s gendered strategies, featuring lengthy articles discussing challenges and regulations regarding women’s mobilization, duties, and integration, societal oppression women face in the conflict region, and the appropriate lifestyle members should embody within the organization. The analysis also benefited from the PKK’s leader Abdullah Öcalan’s books, reports, and other PKK publications, interviews with PKK members by the local media, the books written by ex-combatants, and government reports.
+I read each piece of writing that includes the keywords “woman,” “girl/daughter,” “madam/lady,” recorded and analyzed the information regarding the benefits and costs women provide in sustaining the movement. There words are “kadın,” “kız,” “bayan,” in Turkish, respectively. All the quotations from the original sources in the article are my translations.
+Organization of Shared Data:
+The data repository contains representative excerpts from the newsletter Serxwebun which helped me induct the mechanisms and conditions under which women insurgents shaped the rebel organization structure and facilitated sustaining the rebellion. The data that has been collected but not shared here includes excerpts from the newsletter that focus on propaganda activities of the organization which do not provide useful information to assess the main research question of this study, hence are excluded from the data repository. The repository includes representative excerpts from the newsletter followed by a short description of how it informed the mechanisms, conditions and the historical narrative analyzed in the study, together with the bibliographical information on the resource from it was taken.
+**File Access**
+Documentation freely accessible under the Creative Commons Attribution-Share Alike 4.0 license.
+Data files accessible without restrictions for all registered QDR users under our Standard Download Agreement.
+**Included Files**
+This collection contains the following files:
+Baser_DataNarrative.pdf
+Baser_Excerpts_Data.xlsx
+README_Baser.txt
+**Data Processing Note**
+The data were processed according to the Qualitative Data Repository’s curation policy. All files were checked for integrity. Files were checked to make sure they match documentation and consistent file names were applied. PDF files were converted to PDF/A using Adobe Acrobat Pro DC Version 2020.006.20034, XMP tags edited using AutoMedata Version 1.0.0.20.
+*****
+These data were obtained from the Qualitative Data Repository (QDR - http://qdr.syr.edu), a dedicated archive for storing and sharing digital data (and accompany ing documentation) generated or collected through qualitative and multi-method research in the social sciences. QDR is supported by the National Science Foundation. Please consult QDR's General Terms and Conditions of Use (https://qdr.syr.edu/termsandconditions).

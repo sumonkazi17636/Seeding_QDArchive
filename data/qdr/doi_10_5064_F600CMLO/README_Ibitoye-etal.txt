@@ -1,0 +1,270 @@
+**Title**
+Demand for Modern Contraception in Sub-Saharan Africa: New Methods, New Evidence
+
+**Suggested Citation**
+Please cite any data used from this data project as follows: 
+
+Ibitoye, Mobolaji; OlaOlorun, Funmilola; Casterline, John B.. 2023. "Demand for Modern Contraception in Sub-Saharan Africa: New Methods, New Evidence_Qualitative Data Collection". Qualitative Data Repository. https://doi.org/10.5064/F600CMLO. QDR Main Collection. 
+
+**Description**
+Project Summary
+
+**File Access**
+Documentation freely accessible under the Creative Commons Attribution-Share Alike 4.0 license.
+Data files accessible without restrictions for all registered QDR users under our Standard Download Agreement.
+
+**Included Files**
+This collection contains the following files and folders:
+
+READNE_Ibitoye-etal.txt
+Ibitoye-et-al_CognitiveInterviews_Guide.pdf
+Ibitoye-et-al_CognitiveInterviews_InformedConsent.pdf
+Ibitoye-et-al_CognitiveInterviews_SampleCharacteristics.pdf
+Ibitoye-et-al_CoupleInterviews_Guide.pdf
+Ibitoye-et-al_IndividualAndCoupleInterviews_InformedConsent.pdf
+Ibitoye-et-al_IndividualAndCoupleInterviews_SampleCharacteristics.pdf
+Ibitoye-et-al_IndividualInterviews_Guide.pdf
+Ibitoye-etal_Cognitive_Interviews/
+    Ibitoye-etal_CI-V1-JA-003.pdf
+    Ibitoye-etal_CI-V1-JA-004.pdf
+    Ibitoye-etal_CI-V1-KB-005.pdf
+    Ibitoye-etal_CI-V1-MB-005.pdf
+    Ibitoye-etal_CI-V1-MB-006.pdf
+    Ibitoye-etal_CI-V1-MS-003.pdf
+    Ibitoye-etal_CI-V1-MS-004.pdf
+    Ibitoye-etal_CI-V1-TA-003.pdf
+    Ibitoye-etal_CI-V1-TA-004.pdf
+    Ibitoye-etal_CI-V1-TO-006.pdf
+    Ibitoye-etal_CI-V2-JA-005.pdf
+    Ibitoye-etal_CI-V2-KB-003.pdf
+    Ibitoye-etal_CI-V2-KB-004.pdf
+    Ibitoye-etal_CI-V2-MB-007.pdf
+    Ibitoye-etal_CI-V2-MB-008.pdf
+    Ibitoye-etal_CI-V2-MS-005.pdf
+    Ibitoye-etal_CI-V2-TA-006.pdf
+    Ibitoye-etal_CI-V2-TO-003.pdf
+    Ibitoye-etal_CI-V2-TO-004.pdf
+    Ibitoye-etal_CI-V3-JA-006.pdf
+    Ibitoye-etal_CI-V3-KB-006.pdf
+    Ibitoye-etal_CI-V3-MB-003.pdf
+    Ibitoye-etal_CI-V3-MB-004.pdf
+    Ibitoye-etal_CI-V3-MB-009.pdf
+    Ibitoye-etal_CI-V3-MB-010.pdf
+    Ibitoye-etal_CI-V3-MS-006.pdf
+    Ibitoye-etal_CI-V3-TA-005.pdf
+    Ibitoye-etal_CI-V3-TO-005.pdf
+    Ibitoye-etal_CI-V4-JA-001.pdf
+    Ibitoye-etal_CI-V4-JA-002.pdf
+    Ibitoye-etal_CI-V4-KB-001.pdf
+    Ibitoye-etal_CI-V4-KB-002.pdf
+    Ibitoye-etal_CI-V4-MB-001.pdf
+    Ibitoye-etal_CI-V4-MB-002.pdf
+    Ibitoye-etal_CI-V4-MS-001.pdf
+    Ibitoye-etal_CI-V4-MS-002.pdf
+    Ibitoye-etal_CI-V4-TA-001.pdf
+    Ibitoye-etal_CI-V4-TA-002.pdf
+    Ibitoye-etal_CI-V4-TO-001.pdf
+    Ibitoye-etal_CI-V4-TO-002.pdf
+Ibitoye-etal_In-Depth_Interviews/
+    Ibitoye-etal_IDI-AK-R-F-1.pdf
+    Ibitoye-etal_IDI-AK-R-F-2.pdf
+    Ibitoye-etal_IDI-AK-R-F-3.pdf
+    Ibitoye-etal_IDI-AK-R-F-4.pdf
+    Ibitoye-etal_IDI-AK-R-F-5.pdf
+    Ibitoye-etal_IDI-AK-R-F-6.pdf
+    Ibitoye-etal_IDI-AK-R-F-7.pdf
+    Ibitoye-etal_IDI-AK-R-M-1.pdf
+    Ibitoye-etal_IDI-AK-R-M-2.pdf
+    Ibitoye-etal_IDI-AK-R-M-3.pdf
+    Ibitoye-etal_IDI-AK-R-M-5.pdf
+    Ibitoye-etal_IDI-AK-R-M-6.pdf
+    Ibitoye-etal_IDI-AK-R-M-7.pdf
+    Ibitoye-etal_IDI-AK-U-F-1.pdf
+    Ibitoye-etal_IDI-AK-U-F-2.pdf
+    Ibitoye-etal_IDI-AK-U-F-3.pdf
+    Ibitoye-etal_IDI-AK-U-F-4.pdf
+    Ibitoye-etal_IDI-AK-U-F-5.pdf
+    Ibitoye-etal_IDI-AK-U-F-6.pdf
+    Ibitoye-etal_IDI-AK-U-F-7.pdf
+    Ibitoye-etal_IDI-AK-U-M-1.pdf
+    Ibitoye-etal_IDI-AK-U-M-2.pdf
+    Ibitoye-etal_IDI-AK-U-M-3.pdf
+    Ibitoye-etal_IDI-AK-U-M-4.pdf
+    Ibitoye-etal_IDI-AK-U-M-5.pdf
+    Ibitoye-etal_IDI-AK-U-M-6.pdf
+    Ibitoye-etal_IDI-AN-R-F-1.pdf
+    Ibitoye-etal_IDI-AN-R-F-2.pdf
+    Ibitoye-etal_IDI-AN-R-F-3.pdf
+    Ibitoye-etal_IDI-AN-R-F-4.pdf
+    Ibitoye-etal_IDI-AN-R-F-5.pdf
+    Ibitoye-etal_IDI-AN-R-F-6.pdf
+    Ibitoye-etal_IDI-AN-R-F-7.pdf
+    Ibitoye-etal_IDI-AN-R-F-8.pdf
+    Ibitoye-etal_IDI-AN-R-M-1.pdf
+    Ibitoye-etal_IDI-AN-R-M-2.pdf
+    Ibitoye-etal_IDI-AN-R-M-3.pdf
+    Ibitoye-etal_IDI-AN-R-M-4.pdf
+    Ibitoye-etal_IDI-AN-R-M-5.pdf
+    Ibitoye-etal_IDI-AN-R-M-6.pdf
+    Ibitoye-etal_IDI-AN-R-M-7.pdf
+    Ibitoye-etal_IDI-AN-U-F-1.pdf
+    Ibitoye-etal_IDI-AN-U-F-2.pdf
+    Ibitoye-etal_IDI-AN-U-F-3.pdf
+    Ibitoye-etal_IDI-AN-U-F-4.pdf
+    Ibitoye-etal_IDI-AN-U-F-5.pdf
+    Ibitoye-etal_IDI-AN-U-F-6.pdf
+    Ibitoye-etal_IDI-AN-U-M-1.pdf
+    Ibitoye-etal_IDI-AN-U-M-2.pdf
+    Ibitoye-etal_IDI-AN-U-M-3.pdf
+    Ibitoye-etal_IDI-AN-U-M-4.pdf
+    Ibitoye-etal_IDI-AN-U-M-5.pdf
+    Ibitoye-etal_IDI-AN-U-M-6.pdf
+    Ibitoye-etal_IDI-GO-R-F-13.pdf
+    Ibitoye-etal_IDI-GO-R-F-14.pdf
+    Ibitoye-etal_IDI-GO-R-F-15.pdf
+    Ibitoye-etal_IDI-GO-R-F-16.pdf
+    Ibitoye-etal_IDI-GO-R-F-17.pdf
+    Ibitoye-etal_IDI-GO-R-F-5.pdf
+    Ibitoye-etal_IDI-GO-R-F-6.pdf
+    Ibitoye-etal_IDI-GO-R-F-7.pdf
+    Ibitoye-etal_IDI-GO-R-M-10.pdf
+    Ibitoye-etal_IDI-GO-R-M-11.pdf
+    Ibitoye-etal_IDI-GO-R-M-12.pdf
+    Ibitoye-etal_IDI-GO-R-M-3.pdf
+    Ibitoye-etal_IDI-GO-R-M-4.pdf
+    Ibitoye-etal_IDI-GO-R-M-9.pdf
+    Ibitoye-etal_IDI-GO-U-F-1.pdf
+    Ibitoye-etal_IDI-GO-U-F-10.pdf
+    Ibitoye-etal_IDI-GO-U-F-11.pdf
+    Ibitoye-etal_IDI-GO-U-F-12.pdf
+    Ibitoye-etal_IDI-GO-U-F-2.pdf
+    Ibitoye-etal_IDI-GO-U-F-3.pdf
+    Ibitoye-etal_IDI-GO-U-F-4.pdf
+    Ibitoye-etal_IDI-GO-U-F-8.pdf
+    Ibitoye-etal_IDI-GO-U-F-9.pdf
+    Ibitoye-etal_IDI-GO-U-M-1.pdf
+    Ibitoye-etal_IDI-GO-U-M-2.pdf
+    Ibitoye-etal_IDI-GO-U-M-5.pdf
+    Ibitoye-etal_IDI-GO-U-M-6.pdf
+    Ibitoye-etal_IDI-GO-U-M-7.pdf
+    Ibitoye-etal_IDI-GO-U-M-8.pdf
+    Ibitoye-etal_IDI-LA-R-F-1.pdf
+    Ibitoye-etal_IDI-LA-R-F-2.pdf
+    Ibitoye-etal_IDI-LA-R-F-3.pdf
+    Ibitoye-etal_IDI-LA-R-F-4.pdf
+    Ibitoye-etal_IDI-LA-R-F-5.pdf
+    Ibitoye-etal_IDI-LA-R-F-6.pdf
+    Ibitoye-etal_IDI-LA-R-F-7.pdf
+    Ibitoye-etal_IDI-LA-R-M-1.pdf
+    Ibitoye-etal_IDI-LA-R-M-2.pdf
+    Ibitoye-etal_IDI-LA-R-M-3.pdf
+    Ibitoye-etal_IDI-LA-R-M-4.pdf
+    Ibitoye-etal_IDI-LA-R-M-5.pdf
+    Ibitoye-etal_IDI-LA-R-M-6.pdf
+    Ibitoye-etal_IDI-LA-U-F-1.pdf
+    Ibitoye-etal_IDI-LA-U-F-2.pdf
+    Ibitoye-etal_IDI-LA-U-F-3.pdf
+    Ibitoye-etal_IDI-LA-U-F-4.pdf
+    Ibitoye-etal_IDI-LA-U-F-5.pdf
+    Ibitoye-etal_IDI-LA-U-F-6.pdf
+    Ibitoye-etal_IDI-LA-U-F-7.pdf
+    Ibitoye-etal_IDI-LA-U-M-1.pdf
+    Ibitoye-etal_IDI-LA-U-M-2.pdf
+    Ibitoye-etal_IDI-LA-U-M-3.pdf
+    Ibitoye-etal_IDI-LA-U-M-4.pdf
+    Ibitoye-etal_IDI-LA-U-M-5.pdf
+    Ibitoye-etal_IDI-LA-U-M-6.pdf
+    Ibitoye-etal_IDI-LA-U-M-7.pdf
+    Ibitoye-etal_IDI-NA-R-F-1.pdf
+    Ibitoye-etal_IDI-NA-R-F-2.pdf
+    Ibitoye-etal_IDI-NA-R-F-3.pdf
+    Ibitoye-etal_IDI-NA-R-F-4.pdf
+    Ibitoye-etal_IDI-NA-R-F-5.pdf
+    Ibitoye-etal_IDI-NA-R-F-6.pdf
+    Ibitoye-etal_IDI-NA-R-F-7.pdf
+    Ibitoye-etal_IDI-NA-R-F-8.pdf
+    Ibitoye-etal_IDI-NA-R-M-1.pdf
+    Ibitoye-etal_IDI-NA-R-M-2.pdf
+    Ibitoye-etal_IDI-NA-R-M-3.pdf
+    Ibitoye-etal_IDI-NA-R-M-4.pdf
+    Ibitoye-etal_IDI-NA-R-M-5.pdf
+    Ibitoye-etal_IDI-NA-R-M-6.pdf
+    Ibitoye-etal_IDI-NA-U-F-1.pdf
+    Ibitoye-etal_IDI-NA-U-F-2.pdf
+    Ibitoye-etal_IDI-NA-U-F-3.pdf
+    Ibitoye-etal_IDI-NA-U-F-4.pdf
+    Ibitoye-etal_IDI-NA-U-F-5.pdf
+    Ibitoye-etal_IDI-NA-U-F-6.pdf
+    Ibitoye-etal_IDI-NA-U-M-1.pdf
+    Ibitoye-etal_IDI-NA-U-M-2.pdf
+    Ibitoye-etal_IDI-NA-U-M-3.pdf
+    Ibitoye-etal_IDI-NA-U-M-4.pdf
+    Ibitoye-etal_IDI-NA-U-M-5.pdf
+    Ibitoye-etal_IDI-SO-R-F-1.pdf
+    Ibitoye-etal_IDI-SO-R-F-2.pdf
+    Ibitoye-etal_IDI-SO-R-F-3.pdf
+    Ibitoye-etal_IDI-SO-R-F-4.pdf
+    Ibitoye-etal_IDI-SO-R-F-5.pdf
+    Ibitoye-etal_IDI-SO-R-F-6.pdf
+    Ibitoye-etal_IDI-SO-R-F-7.pdf
+    Ibitoye-etal_IDI-SO-R-F-8.pdf
+    Ibitoye-etal_IDI-SO-R-M-1.pdf
+    Ibitoye-etal_IDI-SO-R-M-2.pdf
+    Ibitoye-etal_IDI-SO-R-M-3.pdf
+    Ibitoye-etal_IDI-SO-R-M-4.pdf
+    Ibitoye-etal_IDI-SO-R-M-5.pdf
+    Ibitoye-etal_IDI-SO-R-M-6.pdf
+    Ibitoye-etal_IDI-SO-U-F-1.pdf
+    Ibitoye-etal_IDI-SO-U-F-10.pdf
+    Ibitoye-etal_IDI-SO-U-F-11.pdf
+    Ibitoye-etal_IDI-SO-U-F-2.pdf
+    Ibitoye-etal_IDI-SO-U-F-3.pdf
+    Ibitoye-etal_IDI-SO-U-F-4.pdf
+    Ibitoye-etal_IDI-SO-U-F-5.pdf
+    Ibitoye-etal_IDI-SO-U-F-6.pdf
+    Ibitoye-etal_IDI-SO-U-F-7.pdf
+    Ibitoye-etal_IDI-SO-U-F-8.pdf
+    Ibitoye-etal_IDI-SO-U-F-9.pdf
+    Ibitoye-etal_IDI-SO-U-M-1.pdf
+    Ibitoye-etal_IDI-SO-U-M-2.pdf
+    Ibitoye-etal_IDI-SO-U-M-3.pdf
+    Ibitoye-etal_IDI-SO-U-M-4.pdf
+    Ibitoye-etal_IDI-SO-U-M-5.pdf
+    Ibitoye-etal_IDI-SO-U-M-6.pdf
+    Ibitoye-etal_IDI-SO-U-M-7.pdf
+Ibitoye-etal_Joint_Interviews/
+    Ibitoye-etal_JI-AK-R-B-1.pdf
+    Ibitoye-etal_JI-AK-R-B-2.pdf
+    Ibitoye-etal_JI-AK-U-B-1.pdf
+    Ibitoye-etal_JI-AK-U-B-2.pdf
+    Ibitoye-etal_JI-AN-R-B-1.pdf
+    Ibitoye-etal_JI-AN-R-B-2.pdf
+    Ibitoye-etal_JI-AN-R-B-3.pdf
+    Ibitoye-etal_JI-AN-U-B-1.pdf
+    Ibitoye-etal_JI-AN-U-B-2.pdf
+    Ibitoye-etal_JI-GO-R-B-3.pdf
+    Ibitoye-etal_JI-GO-R-B-4.pdf
+    Ibitoye-etal_JI-GO-U-B-1.pdf
+    Ibitoye-etal_JI-GO-U-B-2.pdf
+    Ibitoye-etal_JI-LA-R-B-1.pdf
+    Ibitoye-etal_JI-LA-R-B-2.pdf
+    Ibitoye-etal_JI-LA-U-B-1.pdf
+    Ibitoye-etal_JI-LA-U-B-2.pdf
+    Ibitoye-etal_JI-LA-U-B-3.pdf
+    Ibitoye-etal_JI-NA-R-B-1.pdf
+    Ibitoye-etal_JI-NA-R-B-2.pdf
+    Ibitoye-etal_JI-NA-U-B-1.pdf
+    Ibitoye-etal_JI-NA-U-B-2.pdf
+    Ibitoye-etal_JI-SO-R-B-1.pdf
+    Ibitoye-etal_JI-SO-R-B-2.pdf
+    Ibitoye-etal_JI-SO-U-B-1.pdf
+    Ibitoye-etal_JI-SO-U-B-2.pdf
+    Ibitoye-etal_JI-SO-U-B-3.pdf
+
+**Data Processing Note**
+
+The data were processed according to the Qualitative Data Repository's curation policy. All files were checked for integrity. Files were checked to make sure they match documentation and consistent file names were applied. PDF files were converted to PDF/A using Adobe Acrobat Pro DC Version 2022.001.20117, XMP tags edited using pikepdf, and enhanced for WCAG accessibility compliance.
+
+*****
+
+These data were obtained from the Qualitative Data Repository (QDR - http://qdr.syr.edu), a dedicated archive for storing and sharing digital data (and accompanying documentation) generated or collected through qualitative and multi-method research in the social sciences. QDR is supported by the National Science Foundation. Please consult QDR's General Terms and Conditions of Use (https://qdr.syr.edu/termsandconditions). 
