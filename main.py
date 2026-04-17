@@ -40,7 +40,7 @@ Database   : {}
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo",        choices=["qdr","icpsr","both"], default="both")
-    parser.add_argument("--max",         type=int, default=1000)
+    parser.add_argument("--max", type=int, default=5000)
     parser.add_argument("--export-only", action="store_true")
     args = parser.parse_args()
 

@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 REPO_NAME = "icpsr"
 REPO_URL  = "https://www.icpsr.umich.edu"
-OAI_URL   = "https://www.icpsr.umich.edu/oai/provider"
+OAI_URL   = OAI_URL   = "https://www.icpsr.umich.edu/icpsrweb/ICPSR/oai/studies"
 DATA_ROOT = Path(__file__).parent.parent / "data" / REPO_NAME
 
 NS = {
