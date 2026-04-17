@@ -30,22 +30,25 @@
 ---
 
 ## Project Structure
+
+```
 Seeding_QDArchive/
-├── 23293505-seeding.db       ← SQLite submission file (root of repo)
-├── main.py                   ← Pipeline entry point
+├── 23293505-seeding.db          ← SQLite submission file (root of repo)
+├── main.py                      ← Pipeline entry point
 ├── requirements.txt
 ├── README.md
 ├── db/
-│   ├── schema.sql            ← Six-table schema
-│   └── database.py          ← DB helpers
+│   ├── schema.sql               ← Six-table schema
+│   └── database.py              ← DB helpers
 ├── scrapers/
-│   ├── qdr_scraper.py       ← QDR: OAI-PMH + Dataverse API + File Fetcher
-│   └── icpsr_scraper.py     ← ICPSR: OAI-PMH (see Technical Challenges)
+│   ├── qdr_scraper.py           ← QDR: OAI-PMH + Dataverse API + File Fetcher
+│   └── icpsr_scraper.py         ← ICPSR: OAI-PMH (see Technical Challenges)
 ├── export/
 │   ├── export_csv.py
-│   └── csv/                 ← Generated CSVs
-└── data/                    ← Downloaded files (not in Git)
-└── qdr/{project_folder}/*.pdf, *.txt, *.tab ...
+│   └── csv/                     ← Generated CSVs
+└── data/                        ← Downloaded files (not in Git)
+    └── qdr/{project_folder}/*.pdf, *.txt, *.tab ...
+```
 ---
 
 ## Database Schema
