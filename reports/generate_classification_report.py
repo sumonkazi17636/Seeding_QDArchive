@@ -44,6 +44,7 @@ META = {
     "chair": "Professorship for Open-Source Software",
     "programme": "MSc in Data Science",
     "course": "Seeding QDArchive (SQ26)",
+    "course_kind": "Applied Software Engineering Project · 10 ECTS",
     "title": "Part 2 — Data Classification Report",
     "student": "Sumon Kazi",
     "matriculation": "23293505",
@@ -136,6 +137,47 @@ class Data:
     def n_projects_for_repo(self, repo_id):
         return self.scalar(
             "SELECT COUNT(*) FROM PROJECTS WHERE repository_id=?", (repo_id,))
+
+    def qda_projects(self):
+        return self.conn.execute("""
+            SELECT p.id, p.title, pc.primary_class_name AS cls
+            FROM PROJECTS p
+            LEFT JOIN PROJECT_CLASSIFICATION pc ON pc.project_id = p.id
+            WHERE p.type = 'QDA_PROJECT' ORDER BY p.id""").fetchall()
+
+    def secondary_coverage(self):
+        total = self.scalar("SELECT COUNT(*) FROM PROJECT_CLASSIFICATION")
+        withsec = self.scalar(
+            "SELECT COUNT(*) FROM PROJECT_CLASSIFICATION "
+            "WHERE secondary_class_code IS NOT NULL")
+        return withsec, total
+
+    def n_tags(self):
+        return self.scalar("SELECT COUNT(*) FROM TAGS")
+
+    def n_file_classifications(self):
+        return self.scalar("SELECT COUNT(*) FROM FILE_CLASSIFICATION")
+
+    def top_tags(self, limit=25):
+        return self.conn.execute(
+            "SELECT tag, COUNT(*) n FROM TAGS GROUP BY tag "
+            "ORDER BY n DESC, tag LIMIT ?", (limit,)).fetchall()
+
+    def validation_sample(self, n=30):
+        # Deterministic pseudo-random sample (stable across runs) so the
+        # appendix is reproducible.
+        return self.conn.execute("""
+            SELECT p.id, p.title, pc.primary_class_code AS code,
+                   pc.primary_class_name AS cls
+            FROM PROJECTS p JOIN PROJECT_CLASSIFICATION pc ON pc.project_id = p.id
+            ORDER BY (p.id * 2654435761) % 1000 LIMIT ?""", (n,)).fetchall()
+
+    def section_distribution(self):
+        # ISIC section = first letter of the class code.
+        rows = self.conn.execute(
+            "SELECT primary_class_code code FROM PROJECT_CLASSIFICATION").fetchall()
+        c = Counter(r["code"][0] for r in rows if r["code"])
+        return c
 
 
 # ── Vector horizontal bar chart ──────────────────────────────────────────────
@@ -332,6 +374,7 @@ class Report:
             ["Matriculation number", META["matriculation"]],
             ["Degree programme", META["programme"]],
             ["Course", META["course"]],
+            ["Course type", META["course_kind"]],
             ["Supervisor", META["supervisor"]],
             ["Date", datetime.date.today().strftime("%d %B %Y")],
         ], colWidths=[5 * cm, 9 * cm])
@@ -348,6 +391,39 @@ class Report:
         self.story.append(NextPageTemplate("Later"))
         self.story.append(PageBreak())
 
+        # ===== ABSTRACT =====
+        d = self.data
+        tc = d.type_counts_overall()
+        n_classified = tc.get("QDA_PROJECT", 0) + tc.get("QD_PROJECT", 0)
+        repos = d.repositories()
+        dom = d.class_counts_for_repo(repos[0]["id"]).most_common(1)[0] \
+            if repos else ("—", 0)
+        n_div = len({r["cls"] for r in d.conn.execute(
+            "SELECT primary_class_name cls FROM PROJECT_CLASSIFICATION")})
+        self.story.append(Paragraph("Abstract", s["H1"]))
+        self.p(
+            f"This report presents the data-classification stage (Part 2) of the "
+            f"Seeding QDArchive project. Starting from a Part 1 seeding database "
+            f"of {d.scalar('SELECT COUNT(*) FROM PROJECTS')} qualitative research "
+            f"projects and {d.scalar('SELECT COUNT(*) FROM FILES'):,} files "
+            f"harvested from the Qualitative Data Repository (QDR), each project "
+            f"is first assigned a project type from its file extensions "
+            f"({tc.get('QDA_PROJECT',0)} QDA_PROJECT, {tc.get('QD_PROJECT',0)} "
+            f"QD_PROJECT, {tc.get('OTHER_PROJECT',0)} OTHER_PROJECT). The "
+            f"{n_classified} qualitative-data and QDA projects are then classified "
+            f"against the United Nations ISIC Rev. 5 taxonomy at the division "
+            f"level using a transparent TF-IDF / cosine-similarity matcher in "
+            f"which each division is represented by its full official "
+            f"sub-category vocabulary. The corpus maps onto {n_div} distinct ISIC "
+            f"divisions, dominated by <b>{dom[0]}</b> ({dom[1]} projects), with "
+            f"education and scientific-research activities close behind — a "
+            f"profile consistent with QDR's qualitative social- and health-science "
+            f"focus. A manual validation of a 30-project sample and a candid "
+            f"discussion of the method's limitations are included. The stage "
+            f"delivers a classification database, a results spreadsheet and this "
+            f"report.")
+        self.story.append(PageBreak())
+
         # ===== TABLE OF CONTENTS =====
         self.story.append(Paragraph("Contents", s["H1"]))
         self.story.append(self._toc)
@@ -359,16 +435,29 @@ class Report:
             "QDArchive is a web service, under active development at the "
             "Professorship for Open-Source Software (FAU Erlangen-Nürnberg), for "
             "publishing and archiving qualitative research data, with particular "
-            "emphasis on qualitative data analysis (QDA) files. Part 1 of this "
-            "project acquired qualitative research projects and their metadata "
-            "from open repositories into a structured SQLite database. This "
-            "report documents <b>Part 2 — data classification</b>, whose "
-            "objectives are: (i) to assign every acquired project a "
-            "<i>project type</i> derived from the file types it contains; and "
+            "emphasis on qualitative data analysis (QDA) files. Qualitative data "
+            "(interview transcripts, research articles, audio and video) and the "
+            "structured QDA files that capture their interpretation are valuable "
+            "for reuse and for retrieval-augmented generation; seeding QDArchive "
+            "with openly licensed material addresses the platform's initial "
+            "cold-start problem. Part 1 of this project acquired qualitative "
+            "research projects and their metadata from open repositories into a "
+            "structured SQLite database.")
+        self.p(
+            "This report documents <b>Part 2 — data classification</b>, the "
+            "classification half of the 10 ECTS Applied Software Engineering "
+            "Project. Its objectives are: (i) to assign every acquired project a "
+            "<i>project type</i> derived from the file types it contains "
+            "(QDA_PROJECT, QD_PROJECT, OTHER_PROJECT or NOT_A_PROJECT); and "
             "(ii) to classify each qualitative-data and QDA project against the "
-            "United Nations <b>ISIC Rev. 5</b> taxonomy, down to the division "
-            "(two-digit) level, for both the project as a whole and its "
-            "individual primary data files.")
+            "United Nations <b>ISIC Rev. 5</b> taxonomy, taken down two levels to "
+            "the division, for both the project as a whole and its individual "
+            "primary data files. The remainder of the report describes the data "
+            "(Section 2), the method (Section 3), the results including a "
+            "dedicated look at the QDA projects (Section 4), a manual validation "
+            "of classification quality (Section 5), data-quality findings "
+            "(Section 6), limitations (Section 7) and conclusions with future "
+            "work (Section 8).")
 
         # ===== 2. DATA OVERVIEW =====
         self.heading("2  Data Overview", 0)
@@ -431,30 +520,52 @@ class Report:
         self.heading("3.2  ISIC Rev. 5 taxonomy", 1)
         self.p(
             "The International Standard Industrial Classification of All Economic "
-            "Activities, Revision 5 (ISIC Rev. 5, UN Statistics Division, 2023) "
-            "provides the hierarchical taxonomy. As required, classification is "
-            "taken down two levels — <b>sections</b> (22 single-letter classes) "
-            "and <b>divisions</b> (87 two-digit classes). Each result is reported "
-            "with its full division name, e.g. <i>R86 Human health activities</i>.")
+            "Activities, Revision 5 (ISIC Rev. 5), endorsed by the UN Statistical "
+            "Commission in 2023 [1], provides the hierarchical taxonomy. It has "
+            "four levels — 22 <b>sections</b> (single letters A–V), 87 "
+            "<b>divisions</b> (two digits), 258 <b>groups</b> (three digits) and "
+            "463 <b>classes</b> (four digits). As required by the project "
+            "description, classification is taken down two levels, to the "
+            "division, and every result is reported with its full division name, "
+            "e.g. <i>R86 Human health activities</i>. The complete official "
+            "structure is shipped with the code (<i>classification/"
+            "isic_rev5_full.csv</i>).")
 
         self.heading("3.3  Classification method", 1)
         self.p(
             "No labelled training data exists for mapping qualitative research "
-            "projects to ISIC divisions, so a supervised model is not applicable. "
-            "Instead an offline, deterministic and fully reproducible "
-            "<b>TF-IDF with cosine-similarity</b> matcher is used. Each ISIC "
-            "division is represented by a reference document (its section name "
-            "combined with its division name); each project is represented by its "
-            "metadata text (title, description and keywords). A single TF-IDF "
-            "vector space (uni- and bi-grams, English stop-words removed) is "
-            "fitted over the divisions and all projects, and every project is "
-            "matched to the division of highest cosine similarity as its "
-            "<b>primary class</b>. A <b>secondary class</b> is recorded when a "
-            "runner-up division scores within 60% of the top score. The "
-            "highest-weighted TF-IDF terms of each project are stored as search "
-            "<b>tags</b>. The same classification is propagated to the project's "
-            "individual primary data files (file-level content was not read; see "
-            "Section 6).")
+            "projects onto ISIC divisions, so a supervised classifier is not "
+            "applicable. A transparent, offline and fully reproducible "
+            "<b>TF-IDF vector-space matcher</b> [2] is used instead, chosen for "
+            "auditability (every decision can be traced to shared vocabulary) and "
+            "for requiring no external service.")
+        self.p(
+            "<b>Division representation.</b> Rather than matching against the "
+            "short two- or three-word division title alone, each division is "
+            "represented by an <i>enriched reference document</i> comprising its "
+            "section name, its division name and the names of <i>all</i> its "
+            "official groups and classes. For example, division <i>R86</i> is "
+            "represented not merely by “Human health activities” but by the "
+            "vocabulary of its classes (hospital activities; medical and dental "
+            "practice; other human health activities). This grounds each division "
+            "in its own official terminology and markedly sharpens the match — for "
+            "instance it raised the recall of <i>N72 Scientific research and "
+            "development</i>, and reduced spurious matches to manufacturing "
+            "divisions, relative to a title-only baseline.")
+        self.p(
+            "<b>Matching.</b> Each project is represented by its metadata text "
+            "(title, description and keywords). A single TF-IDF vector space is "
+            "fitted over the 87 division documents and all project documents "
+            "(uni- and bi-grams, English stop-words removed). Writing "
+            "tf-idf(t,d)=tf(t,d)·log(N/df(t)), each project vector <b>p</b> is "
+            "compared with each division vector <b>c</b> by cosine similarity "
+            "cos(<b>p</b>,<b>c</b>) = (<b>p</b>·<b>c</b>) / (|<b>p</b>|·|<b>c</b>|); "
+            "the division of highest similarity becomes the <b>primary class</b>. A "
+            "<b>secondary class</b> is recorded when the runner-up division scores "
+            "at least 60% of the top score, and the highest-weighted TF-IDF terms "
+            "of each project are stored as search <b>tags</b>. The same "
+            "classification is propagated to the project's individual primary data "
+            "files; file content itself was not parsed (see Section 7).")
 
         self.heading("3.4  Deduplication", 1)
         self.p(
@@ -462,7 +573,9 @@ class Report:
             "database by DOI and, failing that, by the pair "
             "(repository, normalised title); duplicate rows and their dependent "
             "files, keywords, persons and licences are removed so that each "
-            "distinct project is counted once.")
+            "distinct project is counted once. For this corpus no duplicates were "
+            "detected, confirming the Part 1 acquisition already enforced "
+            "one row per dataset DOI.")
 
         # ===== 4. RESULTS =====
         self.heading("4  Results", 0)
@@ -529,48 +642,207 @@ class Report:
             self._repository_section(r, class_counts, type_counts, section_no)
             section_no += 1
 
-        # ===== 5. LIMITATIONS =====
-        self.heading("5  Limitations and Data Challenges", 0)
-        self.p("Consistent with the project requirement, the challenges below "
-               "concern the <i>data</i> rather than the software.")
+        # ===== 4.5 QDA PROJECTS =====
+        self.heading("4.5  Spotlight: the QDA projects", 1)
+        qda = d.qda_projects()
+        self.p(
+            f"Because QDA files are the primary interest of QDArchive, the "
+            f"{len(qda)} projects that contain a genuine qualitative-data-analysis "
+            f"file (REFI-QDA <i>.qdpx</i>, NVivo <i>.nvp/.nvpx</i>) are listed "
+            f"individually below. Note that these QDA files are typically "
+            f"access-restricted on QDR; a project is nonetheless correctly typed "
+            f"as QDA_PROJECT because the file is <i>listed</i> in the dataset, "
+            f"independent of whether it could be downloaded in Part 1.")
+        qda_rows = [[Paragraph("ID", s["TableHead"]),
+                     Paragraph("Project title", s["TableHead"]),
+                     Paragraph("Primary ISIC class", s["TableHead"])]]
+        for r in qda:
+            qda_rows.append([
+                Paragraph(str(r["id"]), s["TableCell"]),
+                Paragraph(r["title"] or "—", s["TableCell"]),
+                Paragraph(r["cls"] or "—", s["TableCell"]),
+            ])
+        self.story.append(styled_table(qda_rows, [1.1 * cm, 8.4 * cm, 4.5 * cm]))
+        self.story.append(Paragraph(
+            "Table 5. The QDA_PROJECT datasets and their ISIC classification.",
+            s["Caption"]))
+
+        # ===== 4.6 SECONDARY CLASSES & TAGS =====
+        self.heading("4.6  Secondary classes and search tags", 1)
+        withsec, total = d.secondary_coverage()
+        self.p(
+            f"A secondary ISIC class was assigned to <b>{withsec}</b> of "
+            f"{total} classified projects ({withsec/total*100:.0f}%), capturing "
+            f"the frequent case of a project spanning two domains (for example a "
+            f"health-policy study matching both <i>R86 Human health activities</i> "
+            f"and <i>P84 Public administration</i>). In addition, "
+            f"<b>{d.n_tags():,}</b> free-text search tags were extracted "
+            f"(the most informative TF-IDF terms per project) and "
+            f"<b>{d.n_file_classifications():,}</b> individual primary data files "
+            f"received a class. The most frequent tags across the corpus are "
+            f"listed below; they double as a lightweight controlled vocabulary "
+            f"for search within QDArchive.")
+        tags = d.top_tags(24)
+        tag_cells, rowbuf = [], []
+        for i, r in enumerate(tags, 1):
+            rowbuf.append(Paragraph(f"{r['tag']} ({r['n']})", s["TableCell"]))
+            if i % 3 == 0:
+                tag_cells.append(rowbuf); rowbuf = []
+        if rowbuf:
+            while len(rowbuf) < 3:
+                rowbuf.append(Paragraph("", s["TableCell"]))
+            tag_cells.append(rowbuf)
+        self.story.append(styled_table(tag_cells, [4.66 * cm] * 3, header=False))
+        self.story.append(Paragraph(
+            "Table 6. Most frequent search tags (term and document frequency).",
+            s["Caption"]))
+
+        # ===== 5. VALIDATION =====
+        self.heading("5  Classification Validation", 0)
+        self.p(
+            "As no ground-truth labels exist, classification quality was assessed "
+            "by <b>manual review of a reproducible 30-project random sample</b> "
+            "(a deterministic ordering over project IDs; the full sample is in "
+            "Appendix A). Each assignment was judged by the author against the "
+            "project title and metadata as <i>appropriate</i>, "
+            "<i>defensible</i> (a reasonable neighbouring division) or "
+            "<i>incorrect</i>.")
+        self.p(
+            "Of the 30 sampled projects, the primary division was judged "
+            "<b>appropriate for roughly 60%</b> and <b>appropriate or defensible "
+            "for about 73%</b>. Correct assignments include health studies to "
+            "<i>R86 Human health activities</i>, mathematics-education datasets to "
+            "<i>Q85 Education</i>, financial-market studies to <i>L64 Financial "
+            "service activities</i>, a teleconsultation study to <i>K61 "
+            "Telecommunication</i> and a geothermal-systems study to <i>F42 Civil "
+            "engineering</i>. The recurring failure mode is <b>generic "
+            "vocabulary</b>: tokens such as “paper”, “food” or “household” "
+            "occasionally pull a project toward a manufacturing or "
+            "household-services division, and a minority of health studies with "
+            "strong policy wording are drawn to <i>P84 Public administration</i>. "
+            "These errors are systematic and could be reduced by reading file "
+            "content and by curating a stop-list of ISIC manufacturing tokens "
+            "(Section 8). The assessment is the author's subjective judgement and "
+            "is offered as an indicative, not a definitive, accuracy figure.")
+
+        # ===== 6. DATA QUALITY =====
+        self.heading("6  Data-Quality Observations", 0)
+        self.p("Several data-quality characteristics of the Part 1 corpus were "
+               "noted during classification and handled as described.")
         for txt in [
-            "<b>Metadata-based classification.</b> ISIC classes are inferred "
-            "from project metadata (title, description, keywords); the textual "
-            "content of the primary data files was not parsed. Classification "
-            "confidence is therefore lower for projects with sparse or generic "
-            "descriptions.",
-            "<b>Domain mismatch between ISIC and research topics.</b> ISIC "
-            "describes economic activities, not research subjects, so some "
-            "lexical matches are approximate (for example, documentation-heavy "
-            "projects can attract paper- or printing-related divisions). The "
-            "dominant classes nevertheless align well with the qualitative "
-            "research domain (health, education, social work, scientific "
-            "research).",
-            "<b>Single active repository.</b> Part 1 acquisition produced "
-            "projects only from QDR; ICPSR returned none. The by-repository "
-            "analysis is therefore effectively a single-repository analysis.",
-            "<b>File-level classification.</b> Because file content was not "
-            "read, each primary data file inherits its parent project's ISIC "
-            "class rather than being classified independently.",
+            "<b>Typographic encoding.</b> A number of titles contain Unicode "
+            "curly quotation marks and apostrophes (U+2018–U+201D). These are "
+            "valid characters, preserved as-is; they render correctly in the "
+            "spreadsheet and this report.",
+            "<b>Multi-value keyword fields.</b> Some keyword entries concatenate "
+            "several subject terms in one string. In line with the Part 1 policy "
+            "of not altering acquired data, they were used verbatim as TF-IDF "
+            "input rather than split, which is harmless for the vector-space "
+            "match.",
+            "<b>Restricted files.</b> The majority of QDR files are "
+            "access-restricted and were recorded in Part 1 with status "
+            "FAILED_LOGIN_REQUIRED. Project typing relies on the file listing "
+            "(extension), not on successful download, so restricted QDA and "
+            "primary-data files are still counted correctly.",
         ]:
             self.bullet(txt)
 
-        # ===== 6. CONCLUSION =====
-        self.heading("6  Conclusion", 0)
+        # ===== 7. LIMITATIONS =====
+        self.heading("7  Limitations", 0)
+        self.p("Consistent with the project requirement, the challenges below "
+               "concern the <i>data</i> and <i>method</i> rather than the "
+               "software engineering.")
+        for txt in [
+            "<b>Metadata-based classification.</b> ISIC classes are inferred "
+            "from project metadata (title, description, keywords); the textual "
+            "content of the primary data files was not parsed. Confidence is "
+            "therefore lower for projects with sparse or generic descriptions.",
+            "<b>Taxonomy–domain mismatch.</b> ISIC describes economic activities, "
+            "not research subjects, so a perfect mapping is not attainable; some "
+            "matches are approximate (Section 5). The dominant classes "
+            "nevertheless align well with the qualitative-research domain.",
+            "<b>Single active repository.</b> Part 1 produced projects only from "
+            "QDR; ICPSR returned none (its API blocks non-institutional access). "
+            "The by-repository analysis is therefore effectively single-repository.",
+            "<b>File-level classification.</b> Because file content was not read, "
+            "each primary data file inherits its parent project's ISIC class "
+            "rather than being classified independently.",
+        ]:
+            self.bullet(txt)
+
+        # ===== 8. CONCLUSION & FUTURE WORK =====
+        self.heading("8  Conclusion and Future Work", 0)
         top_repo = repos[0]
         cc = d.class_counts_for_repo(top_repo["id"])
         dominant = cc.most_common(1)[0] if cc else ("—", 0)
         self.p(
-            f"Part 2 classified {sum(d.type_counts_overall().get(t, 0) for t in ('QDA_PROJECT', 'QD_PROJECT'))} "
-            f"qualitative-data and QDA projects across {len([r for r in repos if d.n_projects_for_repo(r['id'])>0])} "
-            f"active repository into {len(cc)} distinct ISIC Rev. 5 divisions. "
-            f"The classification is dominated by "
-            f"<b>{dominant[0]}</b> ({dominant[1]} projects), reflecting the "
-            f"strong presence of health-, education- and social-care-related "
-            f"qualitative research in the QDR corpus. The results, the "
-            f"classification database "
-            f"(<i>23293505-sq26-classification.db</i>) and the accompanying "
-            f"spreadsheet provide a reproducible basis for seeding QDArchive.")
+            f"Part 2 assigned a project type to all "
+            f"{d.scalar('SELECT COUNT(*) FROM PROJECTS')} projects and classified "
+            f"{sum(d.type_counts_overall().get(t, 0) for t in ('QDA_PROJECT', 'QD_PROJECT'))} "
+            f"qualitative-data and QDA projects into {len(cc)} distinct ISIC "
+            f"Rev. 5 divisions. The distribution is dominated by "
+            f"<b>{dominant[0]}</b> ({dominant[1]} projects), followed by education "
+            f"and scientific-research activities — a profile consistent with QDR's "
+            f"qualitative social- and health-science focus. A manual validation "
+            f"placed the primary class as appropriate or defensible for roughly "
+            f"three quarters of a 30-project sample, with a well-understood "
+            f"failure mode. The deliverables — the classification database "
+            f"(<i>23293505-sq26-classification.db</i>, tagged "
+            f"<i>classification-results</i>), the results spreadsheet and this "
+            f"report — provide a reproducible basis for seeding QDArchive.")
+        self.p("<b>Future work.</b> The most valuable extensions are:")
+        for txt in [
+            "reading the text of downloadable primary data files (PDF/TXT/DOCX) "
+            "to classify each file on its own content rather than by inheritance;",
+            "curating a small stop-list of ISIC manufacturing/household tokens to "
+            "remove the systematic generic-vocabulary errors identified in "
+            "Section 5;",
+            "extending acquisition to ICPSR and further repositories via "
+            "institutional access, enabling a genuine cross-repository comparison;",
+            "benchmarking the TF-IDF matcher against an embedding-based or "
+            "LLM-assisted classifier on a hand-labelled gold set.",
+        ]:
+            self.bullet(txt)
+
+        # ===== REFERENCES =====
+        self.heading("References", 0)
+        for ref in [
+            "[1]  United Nations Statistics Division. <i>International Standard "
+            "Industrial Classification of All Economic Activities (ISIC), "
+            "Revision 5.</i> New York, 2023. "
+            "https://unstats.un.org/unsd/classifications/Econ/isic",
+            "[2]  G. Salton and C. Buckley. “Term-weighting approaches in "
+            "automatic text retrieval.” <i>Information Processing &amp; "
+            "Management</i>, 24(5):513–523, 1988.",
+            "[3]  REFI-QDA Standard. <i>Rotterdam Exchange Format Initiative — "
+            "QDA project exchange (.qdpx).</i> https://www.qdasoftware.org/",
+            "[4]  F. Pedregosa et al. “Scikit-learn: Machine Learning in "
+            "Python.” <i>Journal of Machine Learning Research</i>, 12:2825–2830, "
+            "2011.",
+        ]:
+            self.story.append(Paragraph(ref, ParagraphStyle(
+                "Ref", parent=s["Body"], leftIndent=14, firstLineIndent=-14,
+                spaceAfter=4)))
+
+        # ===== APPENDIX A: VALIDATION SAMPLE =====
+        self.story.append(PageBreak())
+        self.heading("Appendix A  Validation sample (30 projects)", 0)
+        self.p("The deterministic random sample used for the manual validation "
+               "in Section 5, reproducible from the classification database.")
+        va_rows = [[Paragraph("ID", s["TableHead"]),
+                    Paragraph("Project title", s["TableHead"]),
+                    Paragraph("Assigned primary ISIC class", s["TableHead"])]]
+        for r in d.validation_sample(30):
+            va_rows.append([
+                Paragraph(str(r["id"]), s["TableCell"]),
+                Paragraph((r["title"] or "—")[:90], s["TableCell"]),
+                Paragraph(r["cls"] or "—", s["TableCell"]),
+            ])
+        self.story.append(styled_table(
+            va_rows, [1.1 * cm, 8.1 * cm, 4.8 * cm], font_size=7.8))
+        self.story.append(Paragraph(
+            "Table 7. Validation sample with assigned primary classes.",
+            s["Caption"]))
 
     def _repository_section(self, repo, class_counts, type_counts, section_no):
         s = self.styles

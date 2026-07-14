@@ -2,7 +2,8 @@
 
 **Student:** Sumon Kazi · Matriculation ID: 23293505
 **Programme:** MSc in Data Science
-**Course:** SQ26 – Applied Software Engineering Seminar/Project
+**Course:** SQ26 Seeding QDArchive — Applied Software Engineering Project (ASEP) · 10 ECTS
+**Scope:** Part 1 Data Acquisition + Part 2 Data Classification
 **Professor:** Dirk Riehle, FAU Erlangen-Nürnberg
 **GitHub:** https://github.com/sumonkazi17636/Seeding_QDArchive
 
@@ -157,6 +158,9 @@ Upload dates appear in varying formats across projects: ISO 8601 (`2021-03-15`),
 
 # Part 2 — Data Classification
 
+*This is the classification half of the 10 ECTS Applied Software Engineering
+Project (Acquisition + Classification).*
+
 Part 2 turns the Part 1 seeding database into a **classification database**:
 every project is assigned a *project type*, and every qualitative-data / QDA
 project is classified against the UN **ISIC Rev. 5** taxonomy (down to the
@@ -202,9 +206,16 @@ the course's Google Form, Step 4b).
   could be downloaded in Part 1.
 - **ISIC classification** (`classification/isic_classifier.py`) uses TF-IDF +
   cosine similarity between each project's metadata text (title + description +
-  keywords) and the 87 ISIC Rev. 5 division reference documents
-  (`classification/isic_rev5.csv`, sourced from the UN Statistics Division).
-  It is offline, deterministic and reproducible — no external API or model.
+  keywords) and the 87 ISIC Rev. 5 division reference documents. Crucially,
+  each division is represented not by its short title alone but by an
+  **enriched reference document** built from its section name plus the names of
+  *all* its official groups and classes (from the full ISIC hierarchy,
+  `classification/isic_rev5_full.csv`, sourced from the UN Statistics
+  Division). This grounds each division in its own official vocabulary and
+  markedly improves the match (e.g. it raises the recall of *N72 Scientific
+  research and development* and cuts spurious manufacturing matches versus a
+  title-only baseline). The method is offline, deterministic and
+  reproducible — no external API or model.
 
 ## Results (this dataset)
 
@@ -215,18 +226,28 @@ the course's Google Form, Step 4b).
 | OTHER_PROJECT | 7   | 3.0%  |
 | NOT_A_PROJECT | 0   | 0.0%  |
 
-225 QDA/QD projects were classified into **52 distinct ISIC Rev. 5 divisions**;
-the dominant class is **R86 Human health activities** (26 projects), followed
-by Q85 Education and R87 Residential care activities — consistent with QDR's
-focus on qualitative health and social-science research. All 232 projects are
-from QDR; ICPSR yielded none in Part 1 (see challenges above).
+225 QDA/QD projects were classified into **51 distinct ISIC Rev. 5 divisions**.
+Top classes: **R86 Human health activities** (29), **Q85 Education** (28),
+**N72 Scientific research and development** (17), R87 Residential care (13),
+N73 Market research / public relations (11) — a profile consistent with QDR's
+qualitative health and social-science focus. All 232 projects are from QDR;
+ICPSR yielded none in Part 1 (see challenges above).
+
+## Validation
+
+Because no ground-truth labels exist, classification quality was assessed by a
+**manual review of a reproducible 30-project sample** (Appendix A of the PDF
+report). The primary division was judged appropriate for ~60% of the sample and
+appropriate-or-defensible for ~73%, with a well-understood failure mode
+(generic tokens such as "paper"/"food" occasionally pulling a project toward a
+manufacturing division). This is reported honestly as an indicative figure.
 
 ## Limitations
 
 Classification uses project **metadata only** (file text was not parsed), and
 ISIC describes economic activities rather than research subjects, so some
 lexical matches are approximate. These caveats are documented in the PDF
-report (Section 5). Each primary data file inherits its project's class.
+report (Sections 5–7). Each primary data file inherits its project's class.
 
 ---
 

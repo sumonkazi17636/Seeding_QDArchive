@@ -56,8 +56,12 @@ class ClassificationResult:
 class IsicClassifier:
     def __init__(self, divisions: List[Division] = None):
         self.divisions = divisions or load_divisions()
+        # Each division is represented by its enriched reference text
+        # (section + division + all group/class names). Falls back to the
+        # bare "section division" label if the enriched text is unavailable.
         self.division_docs = [
-            f"{d.section_name} {d.name}" for d in self.divisions
+            d.reference_text or f"{d.section_name} {d.name}"
+            for d in self.divisions
         ]
         self.vectorizer: TfidfVectorizer = None
         self.division_vectors = None
