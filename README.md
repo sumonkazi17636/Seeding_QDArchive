@@ -1,6 +1,7 @@
-# Seeding QDArchive – Part 1: Data Acquisition
+# Seeding QDArchive – Part 1: Data Acquisition + Part 2: Data Classification
 
 **Student:** Sumon Kazi · Matriculation ID: 23293505
+**Programme:** MSc in Data Science
 **Course:** SQ26 – Applied Software Engineering Seminar/Project
 **Professor:** Dirk Riehle, FAU Erlangen-Nürnberg
 **GitHub:** https://github.com/sumonkazi17636/Seeding_QDArchive
@@ -154,17 +155,95 @@ Upload dates appear in varying formats across projects: ISO 8601 (`2021-03-15`),
 
 ---
 
+# Part 2 — Data Classification
+
+Part 2 turns the Part 1 seeding database into a **classification database**:
+every project is assigned a *project type*, and every qualitative-data / QDA
+project is classified against the UN **ISIC Rev. 5** taxonomy (down to the
+division level), for both the project as a whole and its primary data files.
+
+## What it produces
+
+| Output | File |
+|--------|------|
+| Classification database (tag `classification-results`) | `23293505-sq26-classification.db` |
+| Results table (Step 4c) | `export/23293505-sq26-classification.xlsx` |
+| Professional PDF report (Step 4d) | `reports/23293505-sq26-classification-report.pdf` |
+
+## Pipeline
+
+```bash
+python classification/run_classification.py      # build the classification .db
+python export/export_classification_table.py     # write the XLSX results table
+python reports/generate_classification_report.py # write the PDF report
+```
+
+`run_classification.py` copies `23293505-seeding.db` to
+`23293505-sq26-classification.db` (the Part 1 database is never modified),
+applies `db/schema_classification.sql`, deduplicates, assigns `PROJECTS.type`,
+and runs the ISIC classifier — populating the new `PROJECT_CLASSIFICATION`,
+`FILE_CLASSIFICATION` and `TAGS` tables. The console output prints the
+by-repository × project-type distribution and the dominant class (needed for
+the course's Google Form, Step 4b).
+
+## Schema additions (`db/schema_classification.sql`)
+
+- `PROJECTS.type` — `QDA_PROJECT` / `QD_PROJECT` / `OTHER_PROJECT` / `NOT_A_PROJECT`
+- `PROJECT_CLASSIFICATION` — primary/secondary ISIC class per project
+- `FILE_CLASSIFICATION` — primary/secondary ISIC class per primary data file
+- `TAGS` — search tags (top TF-IDF terms) per project
+
+## Method
+
+- **Project type** is derived from the file *extensions* present in each
+  project (`classification/file_types.py`, `classification/project_type.py`).
+  QDA detection is based on a file of a QDA type being *listed* in the project
+  (e.g. `.qdpx`, `.nvp`, `.nvpx`), independent of whether that restricted file
+  could be downloaded in Part 1.
+- **ISIC classification** (`classification/isic_classifier.py`) uses TF-IDF +
+  cosine similarity between each project's metadata text (title + description +
+  keywords) and the 87 ISIC Rev. 5 division reference documents
+  (`classification/isic_rev5.csv`, sourced from the UN Statistics Division).
+  It is offline, deterministic and reproducible — no external API or model.
+
+## Results (this dataset)
+
+| Project type | Count | Share |
+|--------------|-------|-------|
+| QDA_PROJECT   | 4   | 1.7%  |
+| QD_PROJECT    | 221 | 95.3% |
+| OTHER_PROJECT | 7   | 3.0%  |
+| NOT_A_PROJECT | 0   | 0.0%  |
+
+225 QDA/QD projects were classified into **52 distinct ISIC Rev. 5 divisions**;
+the dominant class is **R86 Human health activities** (26 projects), followed
+by Q85 Education and R87 Residential care activities — consistent with QDR's
+focus on qualitative health and social-science research. All 232 projects are
+from QDR; ICPSR yielded none in Part 1 (see challenges above).
+
+## Limitations
+
+Classification uses project **metadata only** (file text was not parsed), and
+ISIC describes economic activities rather than research subjects, so some
+lexical matches are approximate. These caveats are documented in the PDF
+report (Section 5). Each primary data file inherits its project's class.
+
+---
+
 ## Submission Checklist
 
 | Item | Status |
 |------|--------|
+| **Part 1** | |
 | `23293505-seeding.db` in repo root | ✅ |
 | Git tag `part-1-release` pushed | ✅ |
-| REPOSITORIES rows | ✅ 2 |
-| PROJECTS rows | ✅ 232 (complete QDR collection) |
-| FILES rows | ✅ 20,517 |
-| KEYWORDS rows | ✅ 794 |
-| PERSON_ROLE rows | ✅ 178 |
-| LICENSES rows | ✅ 122 |
-| CSVs exported | ✅ |
+| REPOSITORIES / PROJECTS / FILES rows | ✅ 2 / 232 / 20,517 |
+| KEYWORDS / PERSON_ROLE / LICENSES rows | ✅ 794 / 178 / 122 |
 | ICPSR recorded | ✅ (0 projects — blocked, documented above) |
+| **Part 2** | |
+| `23293505-sq26-classification.db` in repo root | ✅ |
+| Git tag `classification-results` | ✅ |
+| XLSX results table | ✅ `export/23293505-sq26-classification.xlsx` |
+| PDF report | ✅ `reports/23293505-sq26-classification-report.pdf` |
+| Google Form (Step 4b) | ⬜ submit using console summary |
+| Moodle upload (XLSX + PDF) | ⬜ |
